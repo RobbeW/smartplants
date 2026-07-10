@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">micro:bit veilige bodemvochtsensor aansluiting</title>
+  <desc id="desc">Veilige micro:bit variant: alleen een 3V veilige sensoruitgang naar P0, gedeelde GND en geen 5V analoge uitgang rechtstreeks naar micro:bit.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8f7f3}
+      .panel{fill:#fff;stroke:#d8cfee;stroke-width:3}
+      .micro{fill:#1f2937;stroke:#0f172a;stroke-width:4}
+      .sensor{fill:#2b2f38;stroke:#12151d;stroke-width:4}
+      .pin{fill:#f5c64b;stroke:#7f6120;stroke-width:2}
+      .wire3{fill:none;stroke:#16a34a;stroke-width:9;stroke-linecap:round}
+      .wireg{fill:none;stroke:#1f2937;stroke-width:9;stroke-linecap:round}
+      .wirea{fill:none;stroke:#ffb000;stroke-width:9;stroke-linecap:round}
+      .danger{fill:#fff1f2;stroke:#d0006f;stroke-width:4}
+      .safe{fill:#ecfdf5;stroke:#16a34a;stroke-width:4}
+      .label{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:30px;font-weight:800;fill:#160033}
+      .small{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:22px;font-weight:700;fill:#42384f}
+      .tag{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:23px;font-weight:900;fill:#fff}
+      .warn{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:24px;font-weight:900;fill:#d0006f}
+      .ok{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:24px;font-weight:900;fill:#047857}
+      .led{fill:#ef4444}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="820"/>
+  <rect class="panel" x="34" y="34" width="1132" height="752" rx="28"/>
+
+  <text class="label" x="72" y="88">micro:bit route: alleen veilig op 3V</text>
+  <text class="small" x="72" y="126">Gebruik micro:bit als toegankelijke IPO-variant, niet als standaard 5V meetroute.</text>
+
+  <rect x="96" y="198" width="420" height="335" rx="34" class="micro"/>
+  <text class="tag" x="132" y="246">micro:bit</text>
+  <circle class="led" cx="246" cy="330" r="8"/><circle class="led" cx="286" cy="330" r="8"/><circle class="led" cx="326" cy="330" r="8"/>
+  <circle class="led" cx="246" cy="370" r="8"/><circle class="led" cx="286" cy="370" r="8"/><circle class="led" cx="326" cy="370" r="8"/>
+  <circle class="pin" cx="150" cy="562" r="25"/><text class="small" x="124" y="620">P0</text>
+  <circle class="pin" cx="308" cy="562" r="25"/><text class="small" x="280" y="620">3V</text>
+  <circle class="pin" cx="466" cy="562" r="25"/><text class="small" x="432" y="620">GND</text>
+
+  <rect x="760" y="210" width="270" height="300" rx="26" class="sensor"/>
+  <text class="tag" x="790" y="256">3V VEILIGE</text>
+  <text class="tag" x="790" y="294">SENSOR</text>
+  <rect x="808" y="334" width="68" height="140" rx="16" fill="#6b7280"/>
+  <rect x="920" y="334" width="68" height="140" rx="16" fill="#6b7280"/>
+  <circle class="pin" cx="770" cy="552" r="17"/><text class="small" x="748" y="604">VCC</text>
+  <circle class="pin" cx="894" cy="552" r="17"/><text class="small" x="866" y="604">GND</text>
+  <circle class="pin" cx="1018" cy="552" r="17"/><text class="small" x="1000" y="604">AO</text>
+
+  <path class="wire3" d="M308 562 C470 430 604 414 770 552"/>
+  <path class="wireg" d="M466 562 C606 594 760 588 894 552"/>
+  <path class="wirea" d="M150 562 C338 686 770 690 1018 552"/>
+
+  <rect x="74" y="660" width="486" height="92" rx="18" class="safe"/>
+  <text class="ok" x="104" y="701">Wel veilig</text>
+  <text class="small" x="104" y="734">AO blijft binnen micro:bit bereik en GND is gedeeld.</text>
+
+  <rect x="632" y="660" width="494" height="92" rx="18" class="danger"/>
+  <text class="warn" x="662" y="701">Niet doen</text>
+  <text class="small" x="662" y="734">Geen 5V analoge uitgang rechtstreeks naar P0.</text>
+</svg>

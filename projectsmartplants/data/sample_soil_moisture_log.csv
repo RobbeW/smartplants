@@ -1,0 +1,13 @@
+trial,condition,water_ml,tijd_ms,raw,note
+Droge bodem,Droog,0,0,712,Sensor even diep in droge potgrond
+Droge bodem,Droog,0,1000,694,Sensor even diep in droge potgrond
+Droge bodem,Droog,0,2000,705,Sensor even diep in droge potgrond
+Droge bodem,Droog,0,3000,687,Sensor even diep in droge potgrond
+Licht vochtige bodem,Licht vochtig,20,0,532,20 ml water toegevoegd en 30 s gewacht
+Licht vochtige bodem,Licht vochtig,20,1000,514,20 ml water toegevoegd en 30 s gewacht
+Licht vochtige bodem,Licht vochtig,20,2000,523,20 ml water toegevoegd en 30 s gewacht
+Licht vochtige bodem,Licht vochtig,20,3000,506,20 ml water toegevoegd en 30 s gewacht
+Natte bodem,Nat,40,0,344,40 ml water toegevoegd en 30 s gewacht
+Natte bodem,Nat,40,1000,331,40 ml water toegevoegd en 30 s gewacht
+Natte bodem,Nat,40,2000,318,40 ml water toegevoegd en 30 s gewacht
+Natte bodem,Nat,40,3000,326,40 ml water toegevoegd en 30 s gewacht

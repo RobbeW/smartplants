@@ -1,0 +1,10 @@
+trial,condition,water_ml,tijd_ms,raw,note
+Droge bodem,Droog,0,0,,
+Droge bodem,Droog,0,1000,,
+Droge bodem,Droog,0,2000,,
+Licht vochtige bodem,Licht vochtig,20,0,,
+Licht vochtige bodem,Licht vochtig,20,1000,,
+Licht vochtige bodem,Licht vochtig,20,2000,,
+Natte bodem,Nat,40,0,,
+Natte bodem,Nat,40,1000,,
+Natte bodem,Nat,40,2000,,

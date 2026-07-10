@@ -1,0 +1,20 @@
+# Local operating-system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.agents/
+.codex/
+
+# Sister projects are local references, not part of the Smart Plants repository.
+Project Wind J2/
+Project Fijnstof/
+
+# Local preview and diagnostic output
+*.log
+.server_stdout.log
+.server_stderr.log
+
+# Keep the publishable project assets, firmware and example CSV files tracked.
+!projectsmartplants/data/*.csv

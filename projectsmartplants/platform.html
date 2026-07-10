@@ -1,0 +1,442 @@
+<!doctype html>
+<!--
+  Project Smart Plants
+  Copyright (c) 2026 Robbe Wulgaert
+-->
+<html lang="nl-BE">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Platform Smart Plants</title>
+  <meta
+    name="description"
+    content="Platform Smart Plants is de browseromgeving om bodemvochtigheid te meten, te kalibreren en te rapporteren met Arduino, WebSerial en PDF-export."
+  />
+  <meta name="author" content="Robbe Wulgaert, AI in de Klas, robbewulgaert.be" />
+  <meta name="copyright" content="Copyright (c) 2026 Robbe Wulgaert" />
+  <link rel="canonical" href="https://robbew.github.io/smartplants/platform.html" />
+  <meta property="og:url" content="https://robbew.github.io/smartplants/platform.html" />
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css" />
+  <script src="vendor/chart.umd.min.js" defer></script>
+  <script src="vendor/jspdf.umd.min.js" defer></script>
+  <script src="vendor/jspdf.plugin.autotable.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body class="app-page">
+  <a class="skip-link" href="#platform-main">Spring naar inhoud</a>
+
+  <header class="app-header project-header">
+    <a class="brand-link project-title" href="index.html" aria-label="Project Smart Plants startpagina">
+      <span class="brand-mark">IW</span>
+      <div class="brand-copy">
+        <span class="eyebrow">Project Smart Plants</span>
+        <h1 class="brand-title">Platform Smart Plants</h1>
+        <span class="brand-subtitle">AI in de Klas - Robbe Wulgaert</span>
+      </div>
+    </a>
+    <div class="header-actions project-actions" aria-label="Platformacties">
+      <a class="secondary-button header-link" href="index.html">Startpagina</a>
+      <a class="secondary-button header-link" href="evaluatie.html">Evaluatie</a>
+      <button id="btn-schema" class="secondary-button" type="button">Schema</button>
+      <button id="btn-help" class="secondary-button" type="button">Hulp</button>
+      <span id="connection-status" class="status-pill">Niet verbonden</span>
+    </div>
+  </header>
+
+  <main id="platform-main" class="app-shell">
+    <section id="compatibility-notice" class="notice hidden" aria-live="polite"></section>
+
+    <nav class="workflow-nav" aria-label="Onderzoeksstappen">
+      <a href="#prediction" class="workflow-step is-active" data-step-link="prediction">1. Voorspel</a>
+      <a href="#setup" class="workflow-step" data-step-link="setup">2. Bouw</a>
+      <a href="#calibration" class="workflow-step" data-step-link="calibration">3. Kalibreer</a>
+      <a href="#measurement" class="workflow-step" data-step-link="measurement">4. Meet</a>
+      <a href="#comparison" class="workflow-step" data-step-link="comparison">5. Analyseer</a>
+      <a href="#conclusion" class="workflow-step" data-step-link="conclusion">6. Besluit</a>
+    </nav>
+
+    <div class="workflow-actions" aria-label="Navigatie tussen stappen">
+      <span id="step-counter" class="step-counter">Stap 1 van 6</span>
+      <div>
+        <button class="secondary-button" type="button" data-step-prev>Vorige</button>
+        <button class="primary-button" type="button" data-step-next>Volgende</button>
+      </div>
+    </div>
+
+    <section id="prediction" class="workflow-section is-active-step" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Voorspellen</p>
+        <h2>Onderzoeksvraag en hypothese</h2>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span class="field-label">Onderzoeksvraag <button class="jargon-help-button" type="button" aria-label="Wat is een onderzoeksvraag?" data-help-text="De vraag die je met je meting wilt beantwoorden. Bijvoorbeeld: wat gebeurt er met de sensorwaarde als de bodem natter wordt?">?</button></span>
+          <textarea id="input-question" rows="2" placeholder="Welke sensorwaarde hoort bij droge, vochtige en natte potgrond?"></textarea>
+        </label>
+        <label>
+          <span class="field-label">Hypothese <button class="jargon-help-button" type="button" aria-label="Wat is een hypothese?" data-help-text="Je voorspelling met een reden. Schrijf: als ..., dan ..., omdat ...">?</button></span>
+          <textarea id="input-hypothesis" rows="2" placeholder="Als ..., dan ..., omdat ..."></textarea>
+        </label>
+        <label>
+          <span class="field-label">Onafhankelijke variabele <button class="jargon-help-button" type="button" aria-label="Wat is een onafhankelijke variabele?" data-help-text="Dit verander je bewust. In dit project is dat meestal de hoeveelheid water.">?</button></span>
+          <input id="input-independent" type="text" value="Hoeveelheid toegevoegd water (ml)" />
+        </label>
+        <label>
+          <span class="field-label">Afhankelijke variabele <button class="jargon-help-button" type="button" aria-label="Wat is een afhankelijke variabele?" data-help-text="Dit meet je. Hier is dat de sensorwaarde van de bodemvochtsensor.">?</button></span>
+          <input id="input-dependent" type="text" value="Sensorwaarde van de bodemvochtsensor" />
+        </label>
+        <label class="wide">
+          <span class="field-label">Gecontroleerde variabelen <button class="jargon-help-button" type="button" aria-label="Wat zijn gecontroleerde variabelen?" data-help-text="Dit houd je gelijk, zodat je proef eerlijk blijft: dezelfde sensor, diepte, bodem en wachttijd.">?</button></span>
+          <textarea id="input-controlled" rows="2" placeholder="Zelfde bodemtype, zelfde sensor, zelfde diepte, zelfde wachttijd ..."></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section id="setup" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Bouwen</p>
+        <h2>Controleer de meetopstelling</h2>
+      </div>
+      <div class="checklist" id="setup-checklist">
+        <label><input type="checkbox" /> Het bord is verbonden met een USB-kabel die data doorgeeft.</label>
+        <label><input type="checkbox" /> De bodemvochtsensor is veilig aangesloten en GND is gedeeld.</label>
+        <label><input type="checkbox" /> De analoge uitgang zit op A0 bij Arduino of P0 bij micro:bit.</label>
+        <label><input type="checkbox" /> De sensor zit telkens even diep in dezelfde soort bodem.</label>
+        <label class="steam-code-check-item">
+          <input type="checkbox" />
+          <span>De juiste Smart Plants-code staat op het bord.</span>
+          <button id="btn-code-help" class="steam-code-help-button" type="button" aria-label="Toon waar de projectcode staat" title="Toon waar de projectcode staat">?</button>
+        </label>
+      </div>
+    </section>
+
+    <section id="calibration" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Kalibreren</p>
+        <h2>Meet droog en nat. Gebruik vochtig als controle</h2>
+      </div>
+      <div class="control-panel">
+        <div>
+          <p>
+            Verbind Arduino of micro:bit, start de demomodus of laad een CSV-bestand. Meet minstens droge en natte bodem met dezelfde sensor.
+            Licht vochtige bodem helpt om te controleren of de middenzone logisch ligt.
+          </p>
+          <div class="toolbar">
+            <button id="btn-connect" class="primary-button" type="button">Verbind bord</button>
+            <button id="btn-demo" class="secondary-button" type="button">Start demomodus</button>
+          </div>
+          <label class="serial-profile-field">
+            Bordtype als autoherkenning niet lukt
+            <select id="serial-profile">
+              <option value="arduino" selected>Arduino - 9600 baud</option>
+              <option value="microbit">micro:bit - 115200 baud</option>
+            </select>
+          </label>
+        </div>
+        <div class="diagnostics-panel" aria-live="polite">
+          <h3>Status</h3>
+          <p id="diagnostic-summary">Nog geen meetwaarden.</p>
+          <ul id="diagnostic-list">
+            <li>Het bord stuurt per regel: tijd_ms,raw of tijd_ms,raw,average,category_code.</li>
+          </ul>
+          <small id="serial-preview">Laatste regel: --</small>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <span>Ruwe waarde</span>
+          <strong id="metric-raw">--</strong>
+          <small>0-1023</small>
+        </div>
+        <div class="metric">
+          <span>Gemiddelde</span>
+          <strong id="metric-average">--</strong>
+          <small>laatste waarde van het bord</small>
+        </div>
+        <div class="metric">
+          <span>Categorie</span>
+          <strong id="metric-category">Onbekend</strong>
+          <small id="metric-category-note">Kalibreer eerst.</small>
+        </div>
+        <div class="metric">
+          <span>Reactie</span>
+          <strong id="metric-output">--</strong>
+          <small id="metric-output-note">Nog geen drempel.</small>
+        </div>
+      </div>
+
+      <div class="sensor-explain">
+        <strong>Waarom zakt de waarde soms als de bodem natter wordt?</strong>
+        <p>Deze sensor meet geen waterpercentage. Hij meet hoe de bodem het elektrische veld rond de sensor verandert. Bij deze sensor geeft meer water meestal een lager getal. Controleer daarom altijd eerst droog en nat met jullie eigen opstelling.</p>
+      </div>
+
+      <div class="formula-band">
+        <div>
+          <strong>Droge bodem</strong>
+          <span>Gemiddelde: <span id="calibration-dry">--</span></span>
+          <button id="btn-capture-dry" class="secondary-button" type="button" disabled>Sla droge meting op</button>
+        </div>
+        <div>
+          <strong>Licht vochtige bodem</strong>
+          <span>Gemiddelde: <span id="calibration-moist">--</span></span>
+          <button id="btn-capture-moist" class="secondary-button" type="button" disabled>Sla vochtige meting op</button>
+        </div>
+        <div>
+          <strong>Natte bodem</strong>
+          <span>Gemiddelde: <span id="calibration-wet">--</span></span>
+          <button id="btn-capture-wet" class="secondary-button" type="button" disabled>Sla natte meting op</button>
+        </div>
+      </div>
+
+      <div class="calibration-values">
+        <span>Richting: <strong id="calibration-direction">Onbekend</strong></span>
+        <span>Drempel droog/vochtig: <strong id="threshold-dry">--</strong></span>
+        <span>Drempel vochtig/nat: <strong id="threshold-wet">--</strong></span>
+      </div>
+
+      <div id="calibration-quality-panel" class="calibration-quality-panel is-pending" aria-live="polite">
+        <div>
+          <span class="quality-label">Kwaliteit van de kalibratie</span>
+          <strong id="calibration-quality-status">Nog niet genoeg data</strong>
+        </div>
+        <p id="calibration-quality-detail">Meet eerst droge en natte bodem met dezelfde sensorpositie. Licht vochtig is de controle.</p>
+        <small id="calibration-quality-gap">Kleinste verschil: --</small>
+      </div>
+    </section>
+
+    <section id="measurement" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Meten</p>
+        <h2>Meetreeksen verzamelen</h2>
+      </div>
+
+      <div class="toolbar">
+        <button id="btn-new-trial" class="secondary-button" type="button">Nieuwe meetreeks</button>
+        <button id="btn-start" class="success-button" type="button" disabled>Start meting</button>
+        <button id="btn-stop" class="danger-button" type="button" disabled>Stop meting</button>
+        <button id="btn-import-csv" class="secondary-button" type="button">Laad CSV</button>
+        <input id="input-import-csv" class="file-input-hidden" type="file" accept=".csv,text/csv" />
+      </div>
+
+      <div class="trial-editor">
+        <label>
+          Naam meetreeks
+          <input id="trial-name" type="text" value="Meting 1" />
+        </label>
+        <label>
+          Bodemconditie
+          <select id="trial-condition">
+            <option value="Droog">Droog</option>
+            <option value="Licht vochtig">Licht vochtig</option>
+            <option value="Nat">Nat</option>
+            <option value="Droge grond steeds natter maken">Droge grond steeds natter maken</option>
+            <option value="Plant A">Plant A</option>
+            <option value="Plant B">Plant B</option>
+            <option value="Andere conditie">Andere conditie</option>
+          </select>
+        </label>
+        <label>
+          Toegevoegd water (ml)
+          <input id="trial-water" type="number" min="0" step="1" value="0" />
+        </label>
+        <label>
+          Notitie
+          <input id="trial-note" type="text" placeholder="Sensorpositie, wachttijd, bodemtype ..." />
+        </label>
+      </div>
+
+      <div class="measurement-layout">
+        <div class="chart-panel live-chart-panel">
+          <div class="chart-panel-header">
+            <h3>Meetgrafiek</h3>
+            <button id="btn-expand-live-chart" class="secondary-button chart-expand-button" type="button">Vergroot grafiek</button>
+          </div>
+          <canvas id="live-chart" aria-label="Live grafiek ruwe bodemvochtigheid"></canvas>
+        </div>
+        <div class="chart-panel">
+          <h3>Recente meetpunten</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>t</th>
+                  <th>Ruw</th>
+                  <th>Gem.</th>
+                  <th>Categorie</th>
+                </tr>
+              </thead>
+              <tbody id="sample-body">
+                <tr><td colspan="4">Nog geen data.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparison" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Analyseren</p>
+        <h2>Meetreeksen vergelijken</h2>
+      </div>
+      <div class="chart-panel comparison-chart-panel">
+        <canvas id="comparison-chart" aria-label="Vergelijkende grafiek bodemvochtigheid"></canvas>
+      </div>
+      <div class="table-actions">
+        <button id="btn-export-csv" class="secondary-button" type="button">Exporteer CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Meetreeks</th>
+              <th>Bodem</th>
+              <th>Water</th>
+              <th>Duur</th>
+              <th>Gem. waarde</th>
+              <th>Min</th>
+              <th>Max</th>
+            </tr>
+          </thead>
+          <tbody id="trial-summary-body">
+            <tr><td colspan="7">Nog geen meetreeksen opgeslagen.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="conclusion" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <p class="eyebrow">Besluiten</p>
+        <h2>Besluit en betrouwbaarheid</h2>
+      </div>
+      <div class="form-grid">
+        <label>
+          Besluit
+          <textarea id="input-conclusion" rows="3" placeholder="Onze metingen tonen dat ..."></textarea>
+        </label>
+        <label>
+          Betrouwbaarheid
+          <textarea id="input-reliability" rows="3" placeholder="Welke meetfouten of beperkingen kunnen de data beinvloeden?"></textarea>
+        </label>
+        <label class="wide">
+          Verbetering
+          <textarea id="input-improvement" rows="2" placeholder="Wat verbeteren jullie aan meetmethode, code of schakeling?"></textarea>
+        </label>
+      </div>
+      <div class="table-actions report-actions">
+        <button id="btn-report" class="primary-button" type="button" disabled>Genereer PDF</button>
+      </div>
+    </section>
+
+    <div class="workflow-actions workflow-actions-bottom" aria-label="Navigatie tussen stappen">
+      <span class="step-counter" data-step-counter-copy>Stap 1 van 6</span>
+      <div>
+        <button class="secondary-button" type="button" data-step-prev>Vorige</button>
+        <button class="primary-button" type="button" data-step-next>Volgende</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="overlay-schema" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Circuit schema">
+    <div class="modal large-modal">
+      <button id="btn-close-schema" class="close-button" type="button" aria-label="Sluit schema">x</button>
+      <p class="eyebrow">Schema</p>
+      <h2>Smart Plants aansluiten</h2>
+      <p>Gebruik Arduino als standaardopstelling: VCC en GND naar de sensor, analoge uitgang naar A0 en USB naar de laptop. De kalibratie gebeurt in het platform.</p>
+      <div class="schema-reference-grid">
+        <figure class="schematic-frame">
+          <img src="media/Project Smart Plants.png" alt="TinkerCAD schema: Arduino met bodemvochtsensor, rode statusled en RGB-led" />
+          <button class="schema-zoom-button" type="button" data-schema-zoom aria-label="Vergroot Arduino schema">Vergroot</button>
+          <figcaption>Arduino/TinkerCAD: sensor op A0, statusled op D10, RGB-led met rood op D11, blauw op D12 en groen op D13.</figcaption>
+        </figure>
+        <figure class="schematic-frame">
+          <img src="media/schema_microbit_soil_sensor_safe_connection.svg" alt="micro:bit veiligheidsschema voor een bodemvochtsensor op veilige 3V spanning" />
+          <button class="schema-zoom-button" type="button" data-schema-zoom aria-label="Vergroot micro:bit schema">Vergroot</button>
+          <figcaption>Gebruik micro:bit alleen als je zeker weet dat P0 maximaal 3V krijgt.</figcaption>
+        </figure>
+      </div>
+      <p class="schema-warning">Sluit nooit een 5V analoge sensoruitgang rechtstreeks aan op een micro:bit-pin. Werk bij twijfel met Arduino.</p>
+    </div>
+  </div>
+
+  <div id="schema-image-viewer" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Vergroot schema">
+    <div class="modal image-viewer-modal">
+      <button id="btn-close-schema-viewer" class="close-button" type="button" aria-label="Sluit vergroot schema">x</button>
+      <img id="schema-viewer-image" src="" alt="" />
+      <p id="schema-viewer-caption" class="schema-viewer-caption"></p>
+    </div>
+  </div>
+
+  <div id="live-chart-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Vergrote meetgrafiek">
+    <div class="modal live-chart-modal">
+      <button id="btn-close-live-chart" class="close-button" type="button" aria-label="Sluit vergrote meetgrafiek">x</button>
+      <div class="chart-panel-header chart-modal-header">
+        <div>
+          <p class="eyebrow">Meting</p>
+          <h2>Vergrote meetgrafiek</h2>
+        </div>
+      </div>
+      <canvas id="live-chart-large" aria-label="Vergrote interactieve grafiek bodemvochtigheid"></canvas>
+    </div>
+  </div>
+
+  <div id="overlay-help" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Experiment hulp">
+    <div class="modal">
+      <button id="btn-close-help" class="close-button" type="button" aria-label="Sluit hulp">x</button>
+      <h2>Snelle hulp</h2>
+      <ol>
+        <li>Werk van boven naar beneden: voorspellen, bouwen, kalibreren, meten, analyseren en besluiten.</li>
+        <li>Schrijf eerst je onderzoeksvraag en voorspelling op.</li>
+        <li>Controleer de schakeling: USB-kabel, GND, analoge ingang en dezelfde sensorpositie.</li>
+        <li>Verbind Arduino, start de demomodus of laad een CSV met eerdere metingen.</li>
+        <li>Kalibreer droog en nat met dezelfde opstelling. Gebruik licht vochtige bodem als extra controle.</li>
+        <li>Kijk of de kalibratie logisch is voor je meetreeksen maakt.</li>
+        <li>Meet meerdere reeksen en vergelijk de resultaten met je eigen cijfers.</li>
+        <li>Schrijf je besluit: wat tonen de metingen, en wat zou je volgende keer verbeteren?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div id="report-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Rapportinstellingen">
+    <form id="report-form" class="modal">
+      <button id="btn-cancel" class="close-button" type="button" aria-label="Annuleer rapport">x</button>
+      <h2>Rapportinstellingen</h2>
+      <label>
+        Studentennamen
+        <input type="text" id="input-names" placeholder="Naam 1, Naam 2 ..." />
+      </label>
+      <label>
+        Klas
+        <input type="text" id="input-class" placeholder="Bijv. 1IW A" />
+      </label>
+      <p class="muted">De PDF bevat onderzoeksvraag, hypothese, kalibratie, meettabel, grafiek, besluit, betrouwbaarheid en verbetering.</p>
+      <button type="submit" class="primary-button">Genereer PDF</button>
+    </form>
+  </div>
+
+  <div id="code-help-modal" class="overlay hidden code-help-overlay" role="dialog" aria-modal="true" aria-labelledby="code-help-title">
+    <article class="modal steam-code-modal">
+      <button id="btn-close-code-help" class="close-button" type="button" aria-label="Sluit codehulp">x</button>
+      <p class="eyebrow">Code uploaden</p>
+      <h2 id="code-help-title">Waar vind ik de projectcode?</h2>
+      <p>Arduino is de standaardroute. Gebruik micro:bit alleen als je zeker weet dat P0 maximaal 3V krijgt. De kalibratie gebeurt in het platform.</p>
+      <p>Optioneel: sluit een rode statusled aan op D10. Voor een RGB-led gebruik je D11 voor rood, D12 voor blauw en D13 voor groen. Gebruik per ledkanaal een eigen weerstand.</p>
+      <div class="code-link-list">
+        <a class="steam-code-link" href="firmware/arduino_smart_plants/arduino_smart_plants.ino">Open Arduino-code</a>
+        <a class="steam-code-link" href="firmware/microbit_smart_plants_makecode.md">Open micro:bit MakeCode-uitleg</a>
+        <a class="steam-code-link" href="firmware/microbit_smart_plants_python.py">Open micro:bit Python-code</a>
+      </div>
+      <p class="schema-warning">Sluit nooit een 5V analoge sensoruitgang rechtstreeks aan op een micro:bit-pin.</p>
+    </article>
+  </div>
+
+  <footer class="app-footer">
+    <p>Auteur: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert. Alle rechten voorbehouden.</p>
+  </footer>
+</body>
+</html>
