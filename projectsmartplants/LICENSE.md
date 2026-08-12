@@ -10,6 +10,6 @@ Where reasonably practical, the attribution must also link to the original proje
 
 Commercial sale, paid distribution, sublicensing, relicensing or repackaging of the material as a commercial product is not permitted without prior written permission from Robbe Wulgaert. Other uses outside educational purposes also require prior written permission.
 
-Third-party software, source material, images and other components remain subject to their own licences and copyright notices. In particular, components in `projectsmartplants/vendor/` retain their own terms. This licence does not replace or restrict those third-party terms.
+Third-party software, source material, images and other components remain subject to their own licences and copyright notices. In particular, components in `vendor/` retain their own terms. This licence does not replace or restrict those third-party terms.
 
 The material is provided "as is", without warranty of any kind. To the extent permitted by law, the author is not liable for claims, damages or other liability arising from its use.
