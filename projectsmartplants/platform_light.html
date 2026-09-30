@@ -1,0 +1,1843 @@
+<!doctype html>
+<!--
+  Project Smart Plants - Platform Light
+  Copyright (c) 2026 Robbe Wulgaert
+-->
+<html lang="nl-BE">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Plants Light</title>
+  <meta
+    name="description"
+    content="Een eenvoudige Smart Plants-omgeving voor leerlingen van ongeveer 10 jaar. Leer input, verwerking, output en OVUR met een micro:bit en bodemvochtsensor."
+  />
+  <meta name="author" content="Robbe Wulgaert, AI in de Klas, robbewulgaert.be" />
+  <meta name="copyright" content="Copyright (c) 2026 Robbe Wulgaert" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="shortcut icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Alleen aanvullingen voor de light-versie.
+       De bestaande Smart Plants-huisstijl blijft in style.css staan. */
+
+    .platform-light {
+      --light-radius: 12px;
+      --light-soft: #f7f4ff;
+      --light-line: #ddd5ef;
+      --light-ok: #eaf9f1;
+      --light-warn: #fff6dc;
+      --light-danger: #fff0f1;
+    }
+
+    .platform-light .app-shell {
+      max-width: 1180px;
+    }
+
+    .platform-light .workflow-nav {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .platform-light .workflow-step {
+      min-height: 3.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .platform-light .workflow-section {
+      border-radius: var(--light-radius);
+    }
+
+    .light-intro {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .light-intro p {
+      max-width: 72ch;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .ipo-strip {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0.6rem;
+      align-items: stretch;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .ipo-card {
+      min-height: 7.5rem;
+      display: grid;
+      align-content: center;
+      gap: 0.3rem;
+      border: 2px solid var(--light-line);
+      border-radius: var(--light-radius);
+      padding: 1rem;
+      background: #fff;
+      text-align: center;
+    }
+
+    .ipo-card strong {
+      font-size: 1.05rem;
+    }
+
+    .ipo-card span {
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .ipo-card.is-active {
+      border-color: var(--primary);
+      background: var(--light-soft);
+      box-shadow: 0 0 0 3px rgba(82, 0, 255, 0.08);
+    }
+
+    .ipo-arrow {
+      align-self: center;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .challenge-card,
+    .guide-card,
+    .measure-card,
+    .zone-card,
+    .code-card,
+    .reflection-card {
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      padding: 1rem;
+      background: #fff;
+    }
+
+    .challenge-card h3,
+    .guide-card h3,
+    .measure-card h3,
+    .zone-card h3,
+    .code-card h3,
+    .reflection-card h3 {
+      margin-top: 0;
+    }
+
+    .choice-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 0.75rem;
+    }
+
+    .choice-button {
+      min-height: 2.8rem;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      background: #fff;
+      color: #241b36;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .choice-button.is-selected {
+      border-color: var(--primary);
+      background: var(--light-soft);
+      color: var(--primary-dark);
+      box-shadow: 0 0 0 2px rgba(82, 0, 255, 0.08);
+    }
+
+    .schema-light-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .schema-light-figure {
+      margin: 0;
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      overflow: hidden;
+      background: #f5f5f7;
+    }
+
+    .schema-light-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #f5f5f7;
+    }
+
+    .schema-light-figure figcaption {
+      padding: 0.8rem 1rem;
+      background: #fff;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .light-checklist {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .light-checklist label {
+      grid-template-columns: auto 1fr;
+      align-items: start;
+      gap: 0.7rem;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      padding: 0.8rem;
+      background: #fff;
+    }
+
+    .light-checklist input {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.12rem;
+    }
+
+    .safety-card {
+      margin-top: 1rem;
+      border-left: 5px solid var(--warning);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      background: var(--light-warn);
+      color: #473400;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .execute-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .substep-card {
+      position: relative;
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      padding: 1rem;
+      background: #fff;
+    }
+
+    .substep-card.is-complete {
+      border-color: rgba(0, 166, 106, 0.45);
+      background: var(--light-ok);
+    }
+
+    .substep-heading {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .substep-number {
+      flex: 0 0 auto;
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .substep-heading h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .substep-heading p {
+      margin: 0.25rem 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .connect-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .sensor-live {
+      display: grid;
+      grid-template-columns: minmax(170px, 0.45fr) 1fr;
+      gap: 1rem;
+      margin-top: 0.8rem;
+      align-items: stretch;
+    }
+
+    .sensor-number {
+      min-height: 8rem;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      border: 2px solid var(--primary);
+      border-radius: var(--light-radius);
+      background: var(--light-soft);
+    }
+
+    .sensor-number span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .sensor-number strong {
+      font-size: clamp(2.4rem, 8vw, 4rem);
+      line-height: 1;
+    }
+
+    .sensor-explanation {
+      display: grid;
+      align-content: center;
+      gap: 0.4rem;
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      padding: 1rem;
+      background: #fff;
+      line-height: 1.5;
+    }
+
+    .capture-area {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin: 0.8rem 0;
+    }
+
+    .reading-slot {
+      min-height: 5.5rem;
+      display: grid;
+      place-items: center;
+      border: 2px dashed var(--light-line);
+      border-radius: 10px;
+      background: #fcfbff;
+      text-align: center;
+    }
+
+    .reading-slot strong {
+      display: block;
+      font-size: 1.55rem;
+    }
+
+    .reading-slot span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 750;
+    }
+
+    .reading-slot.has-value {
+      border-style: solid;
+      border-color: rgba(82, 0, 255, 0.28);
+      background: var(--light-soft);
+    }
+
+    .capture-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .average-line {
+      margin: 0.6rem 0 0;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .average-line strong {
+      color: #241b36;
+    }
+
+    .zone-scale {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      overflow: hidden;
+    }
+
+    .zone {
+      min-height: 7rem;
+      display: grid;
+      align-content: center;
+      gap: 0.3rem;
+      padding: 0.9rem;
+      text-align: center;
+      border-right: 1px solid var(--light-line);
+    }
+
+    .zone:last-child {
+      border-right: 0;
+    }
+
+    .zone-dry {
+      background: var(--light-danger);
+    }
+
+    .zone-good {
+      background: var(--light-ok);
+    }
+
+    .zone-wet {
+      background: #eef8ff;
+    }
+
+    .zone strong {
+      font-size: 1.05rem;
+    }
+
+    .zone span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .direction-note {
+      margin-top: 0.8rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      background: #f8f7fb;
+      color: #4c445c;
+      font-weight: 750;
+      line-height: 1.5;
+    }
+
+    .logic-demo {
+      display: grid;
+      grid-template-columns: 1fr auto 1.25fr auto 1fr;
+      gap: 0.5rem;
+      align-items: stretch;
+      margin: 1rem 0;
+    }
+
+    .logic-box {
+      display: grid;
+      align-content: center;
+      gap: 0.2rem;
+      min-height: 6rem;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      padding: 0.75rem;
+      text-align: center;
+      background: #fff;
+    }
+
+    .logic-box strong {
+      font-size: 1.15rem;
+    }
+
+    .logic-arrow {
+      align-self: center;
+      font-weight: 900;
+      color: var(--primary);
+      font-size: 1.35rem;
+    }
+
+    .code-preview {
+      margin: 0.8rem 0;
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+      background: #1e1b26;
+      color: #f9f7ff;
+      font: 0.92rem/1.55 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      white-space: pre;
+    }
+
+    .makecode-steps {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0.8rem 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: makecode;
+    }
+
+    .makecode-steps li {
+      counter-increment: makecode;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.65rem;
+      align-items: start;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      padding: 0.75rem;
+      background: #fff;
+      line-height: 1.45;
+    }
+
+    .makecode-steps li::before {
+      content: counter(makecode);
+      width: 1.75rem;
+      height: 1.75rem;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #eee7ff;
+      color: #2a0068;
+      font-weight: 900;
+    }
+
+    .test-table-wrap {
+      overflow-x: auto;
+    }
+
+    .test-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    .test-table th,
+    .test-table td {
+      padding: 0.7rem;
+      border-bottom: 1px solid var(--light-line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .test-table th {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .test-result {
+      font-weight: 850;
+    }
+
+    .inline-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.25rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: #f2eff7;
+      color: #4a4256;
+      font-weight: 800;
+    }
+
+    .inline-status.is-ok {
+      background: var(--light-ok);
+      color: #075b3c;
+    }
+
+    .inline-status.is-error {
+      background: var(--light-danger);
+      color: #8d1531;
+    }
+
+    .teacher-details {
+      margin-top: 1rem;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      background: #fbfaff;
+    }
+
+    .teacher-details summary {
+      cursor: pointer;
+      padding: 0.8rem 1rem;
+      font-weight: 850;
+    }
+
+    .teacher-details > div {
+      padding: 0 1rem 1rem;
+    }
+
+    .teacher-details code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .reflection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .completion-card {
+      margin-top: 1rem;
+      border: 2px solid rgba(82, 0, 255, 0.2);
+      border-radius: var(--light-radius);
+      padding: 1rem;
+      background: var(--light-soft);
+    }
+
+    .completion-card strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 820px) {
+      .platform-light .workflow-nav,
+      .schema-light-layout,
+      .reflection-grid,
+      .sensor-live {
+        grid-template-columns: 1fr;
+      }
+
+      .ipo-strip,
+      .logic-demo {
+        grid-template-columns: 1fr;
+      }
+
+      .ipo-arrow,
+      .logic-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+
+      .capture-area {
+        grid-template-columns: 1fr;
+      }
+
+      .zone-scale {
+        grid-template-columns: 1fr;
+      }
+
+      .zone {
+        border-right: 0;
+        border-bottom: 1px solid var(--light-line);
+      }
+
+      .zone:last-child {
+        border-bottom: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="app-page platform-light">
+  <a class="skip-link" href="#platform-main">Spring naar inhoud</a>
+
+  <header class="app-header project-header">
+    <a class="brand-link project-title" href="index.html" aria-label="Project Smart Plants startpagina">
+      <div class="brand-copy">
+        <span class="eyebrow">Project Smart Plants</span>
+        <h1 class="brand-title">Smart Plants Light</h1>
+        <span class="brand-subtitle">micro:bit · meten · denken · testen</span>
+      </div>
+    </a>
+
+    <div class="header-actions project-actions" aria-label="Platformacties">
+      <a class="secondary-button header-link" href="index.html">Startpagina</a>
+      <button id="btn-help" class="secondary-button" type="button">Hulp</button>
+      <span id="connection-status" class="status-pill">Niet verbonden</span>
+    </div>
+  </header>
+
+  <main id="platform-main" class="app-shell">
+    <section id="compatibility-notice" class="notice hidden" aria-live="polite"></section>
+
+    <div class="ipo-strip" aria-label="Input verwerking output">
+      <div class="ipo-card" data-ipo="input">
+        <strong>INPUT</strong>
+        <span>De sensor meet de aarde.</span>
+      </div>
+      <div class="ipo-arrow" aria-hidden="true">→</div>
+      <div class="ipo-card" data-ipo="processing">
+        <strong>VERWERKING</strong>
+        <span>De micro:bit vergelijkt het getal.</span>
+      </div>
+      <div class="ipo-arrow" aria-hidden="true">→</div>
+      <div class="ipo-card" data-ipo="output">
+        <strong>OUTPUT</strong>
+        <span>De leds tonen een gezicht.</span>
+      </div>
+    </div>
+
+    <nav class="workflow-nav" aria-label="OVUR-stappen">
+      <a href="#orient" class="workflow-step is-active" data-step-link="orient">O · Oriënteren</a>
+      <a href="#prepare" class="workflow-step" data-step-link="prepare">V · Voorbereiden</a>
+      <a href="#execute" class="workflow-step" data-step-link="execute">U · Uitvoeren</a>
+      <a href="#reflect" class="workflow-step" data-step-link="reflect">R · Reflecteren</a>
+    </nav>
+
+    <div class="workflow-actions" aria-label="Navigatie tussen stappen">
+      <span id="step-counter" class="step-counter">Stap 1 van 4</span>
+      <div>
+        <button class="secondary-button" type="button" data-step-prev>Vorige</button>
+        <button class="primary-button" type="button" data-step-next>Volgende</button>
+      </div>
+    </div>
+
+    <!-- O: ORIËNTEREN -->
+    <section id="orient" class="workflow-section is-active-step" tabindex="-1">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">O · Oriënteren</p>
+          <h2>Wat gaan we maken?</h2>
+        </div>
+      </div>
+
+      <div class="light-intro">
+        <p>
+          Een plant kan niet zeggen wanneer ze water nodig heeft. Wij bouwen daarom een
+          plantenmeter met een <strong>bodemvochtsensor</strong> en een <strong>micro:bit</strong>.
+        </p>
+        <p>
+          De sensor geeft een getal. De micro:bit bekijkt dat getal en toont daarna een gezicht:
+          blij als er genoeg water is, verdrietig als de aarde droog is.
+        </p>
+      </div>
+
+      <article class="challenge-card">
+        <h3>Onze uitdaging</h3>
+        <p><strong>Kan jij een micro:bit maken die ziet of een plant water nodig heeft?</strong></p>
+      </article>
+
+      <article class="challenge-card" style="margin-top: 1rem;">
+        <h3>Voorspel eerst</h3>
+        <p>Denk je dat de sensor hetzelfde getal geeft in droge en natte aarde?</p>
+        <div class="choice-row" role="group" aria-label="Voorspelling">
+          <button class="choice-button" type="button" data-prediction="zelfde">Ja, hetzelfde getal</button>
+          <button class="choice-button" type="button" data-prediction="anders">Nee, een ander getal</button>
+          <button class="choice-button" type="button" data-prediction="weetniet">Ik weet het nog niet</button>
+        </div>
+        <input id="prediction-value" type="hidden" value="" />
+      </article>
+
+      <article class="guide-card" style="margin-top: 1rem;">
+        <h3>Onthoud</h3>
+        <p>
+          Je hoeft nog niet te weten welk getal “droog” of “nat” betekent.
+          Dat gaan we zelf meten. Zo doen wetenschappers dat ook: eerst voorspellen,
+          daarna meten en dan pas besluiten.
+        </p>
+      </article>
+    </section>
+
+    <!-- V: VOORBEREIDEN -->
+    <section id="prepare" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">V · Voorbereiden</p>
+          <h2>Bouw je plantenmeter</h2>
+        </div>
+      </div>
+
+      <div class="schema-light-layout">
+        <figure class="schema-light-figure">
+          <img
+            src="media/schema_microbit_soil_sensor_safe_connection.svg"
+            alt="Schema van een micro:bit die veilig is aangesloten op een bodemvochtsensor"
+          />
+          <figcaption>
+            Gebruik dit schema. De sensor krijgt 3V van de micro:bit, deelt GND met de micro:bit
+            en stuurt zijn meetwaarde naar pin P0.
+          </figcaption>
+        </figure>
+
+        <div>
+          <h3>Controleer stap voor stap</h3>
+          <div id="build-checklist" class="light-checklist">
+            <label>
+              <input type="checkbox" />
+              <span><strong>1.</strong> Verbind <strong>3V</strong> met de voeding van de sensor.</span>
+            </label>
+            <label>
+              <input type="checkbox" />
+              <span><strong>2.</strong> Verbind <strong>GND</strong> met GND van de sensor.</span>
+            </label>
+            <label>
+              <input type="checkbox" />
+              <span><strong>3.</strong> Verbind <strong>P0</strong> met de signaalpin van de sensor.</span>
+            </label>
+            <label>
+              <input type="checkbox" />
+              <span><strong>4.</strong> Verbind de micro:bit met de computer via USB.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="safety-card">
+        Gebruik alleen een sensor of schakeling die veilig werkt met 3V.
+        Sluit nooit een analoge uitgang van 5V rechtstreeks aan op een pin van de micro:bit.
+      </div>
+
+      <article class="guide-card" style="margin-top: 1rem;">
+        <h3>Wat is hier de input?</h3>
+        <p>
+          De <strong>bodemvochtsensor</strong> is de input. Hij meet de aarde en stuurt een getal
+          naar <strong>P0</strong> van de micro:bit.
+        </p>
+      </article>
+    </section>
+
+    <!-- U: UITVOEREN -->
+    <section id="execute" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">U · Uitvoeren</p>
+          <h2>Meet en programmeer</h2>
+        </div>
+      </div>
+
+      <div class="execute-grid">
+
+        <article id="substep-connect" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">1</span>
+            <div>
+              <h3>Verbind je micro:bit</h3>
+              <p>We lezen nu de getallen van de bodemvochtsensor.</p>
+            </div>
+          </div>
+
+          <div class="connect-panel">
+            <button id="btn-connect" class="primary-button" type="button">Verbind micro:bit</button>
+            <span id="serial-status" class="inline-status">Nog niet verbonden</span>
+          </div>
+
+          <div class="sensor-live">
+            <div class="sensor-number">
+              <span>Sensorgetal</span>
+              <strong id="live-value">--</strong>
+            </div>
+            <div class="sensor-explanation">
+              <strong>Wat zie je?</strong>
+              <span>
+                Dit is het getal dat de sensor via P0 naar de micro:bit stuurt.
+                Het getal is nog niet automatisch “droog” of “nat”. Daarvoor moeten we eerst meten.
+              </span>
+            </div>
+          </div>
+
+          <details class="teacher-details">
+            <summary>Technische info voor de leerkracht</summary>
+            <div>
+              <p>
+                De light-versie verwacht seriële regels in de vorm
+                <code>tijd_ms,raw</code> op <strong>115200 baud</strong>.
+              </p>
+              <p id="serial-preview">Laatste regel: --</p>
+            </div>
+          </details>
+        </article>
+
+        <article id="substep-dry" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">2</span>
+            <div>
+              <h3>Meet droge aarde</h3>
+              <p>Plaats de sensor telkens ongeveer even diep. Bewaar drie metingen.</p>
+            </div>
+          </div>
+
+          <div id="dry-slots" class="capture-area" aria-label="Drie droge metingen"></div>
+
+          <div class="capture-actions">
+            <button id="btn-capture-dry" class="primary-button" type="button" disabled>Bewaar deze meting</button>
+            <button id="btn-reset-dry" class="secondary-button" type="button">Opnieuw</button>
+          </div>
+
+          <p class="average-line">Gemiddelde van droge aarde: <strong id="dry-average">--</strong></p>
+        </article>
+
+        <article id="substep-wet" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">3</span>
+            <div>
+              <h3>Meet natte aarde</h3>
+              <p>Maak de aarde duidelijk nat en bewaar opnieuw drie metingen.</p>
+            </div>
+          </div>
+
+          <div id="wet-slots" class="capture-area" aria-label="Drie natte metingen"></div>
+
+          <div class="capture-actions">
+            <button id="btn-capture-wet" class="primary-button" type="button" disabled>Bewaar deze meting</button>
+            <button id="btn-reset-wet" class="secondary-button" type="button">Opnieuw</button>
+          </div>
+
+          <p class="average-line">Gemiddelde van natte aarde: <strong id="wet-average">--</strong></p>
+        </article>
+
+        <article id="substep-zones" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">4</span>
+            <div>
+              <h3>Maak drie waterzones</h3>
+              <p>De computer verdeelt het gebied tussen jouw droge en natte meting in drie stukken.</p>
+            </div>
+          </div>
+
+          <div id="zones-pending" class="notice">
+            Meet eerst drie keer droge en drie keer natte aarde.
+          </div>
+
+          <div id="zones-ready" class="hidden">
+            <div class="zone-scale" aria-label="Drie waterzones">
+              <div class="zone zone-dry">
+                <strong>Droog</strong>
+                <span id="zone-dry-range">--</span>
+              </div>
+              <div class="zone zone-good">
+                <strong>Genoeg water</strong>
+                <span id="zone-good-range">--</span>
+              </div>
+              <div class="zone zone-wet">
+                <strong>Heel nat</strong>
+                <span id="zone-wet-range">--</span>
+              </div>
+            </div>
+            <div id="direction-note" class="direction-note"></div>
+          </div>
+        </article>
+
+        <article id="substep-moist" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">5</span>
+            <div>
+              <h3>Controleer met vochtige aarde</h3>
+              <p>Nu testen we of een nieuwe meting in de middelste zone terechtkomt.</p>
+            </div>
+          </div>
+
+          <div id="moist-slots" class="capture-area" aria-label="Drie vochtige metingen"></div>
+
+          <div class="capture-actions">
+            <button id="btn-capture-moist" class="primary-button" type="button" disabled>Bewaar deze meting</button>
+            <button id="btn-reset-moist" class="secondary-button" type="button">Opnieuw</button>
+          </div>
+
+          <p class="average-line">Gemiddelde van vochtige aarde: <strong id="moist-average">--</strong></p>
+          <p id="moist-check" class="direction-note">Nog niet getest.</p>
+        </article>
+
+        <article id="substep-logic" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">6</span>
+            <div>
+              <h3>Laat de micro:bit beslissen</h3>
+              <p>Nu gebruiken we input, verwerking en output samen.</p>
+            </div>
+          </div>
+
+          <div class="logic-demo" aria-label="Voorbeeld van input verwerking output">
+            <div class="logic-box">
+              <span>INPUT</span>
+              <strong id="logic-input">--</strong>
+              <small>sensorgetal</small>
+            </div>
+            <div class="logic-arrow" aria-hidden="true">→</div>
+            <div class="logic-box">
+              <span>VERWERKING</span>
+              <strong id="logic-processing">Meet eerst droog en nat</strong>
+            </div>
+            <div class="logic-arrow" aria-hidden="true">→</div>
+            <div class="logic-box">
+              <span>OUTPUT</span>
+              <strong id="logic-output">--</strong>
+            </div>
+          </div>
+
+          <div class="code-card">
+            <h3>Bouw dit in MakeCode</h3>
+            <ol class="makecode-steps">
+              <li>Lees de analoge waarde van <strong>P0</strong> en bewaar die in de variabele <strong>water</strong>.</li>
+              <li>Gebruik een <strong>als ... anders ...</strong>-blok.</li>
+              <li id="makecode-condition">Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.</li>
+              <li>Toon een <strong>verdrietig gezicht</strong> als de aarde droog is.</li>
+              <li>Toon anders een <strong>blij gezicht</strong>.</li>
+            </ol>
+
+            <p><strong>JavaScript-weergave in MakeCode:</strong></p>
+            <pre id="generated-code" class="code-preview">Meet eerst droge en natte aarde.</pre>
+
+            <div class="capture-actions">
+              <button id="btn-copy-code" class="secondary-button" type="button" disabled>Kopieer code</button>
+              <a
+                class="primary-button header-link"
+                href="https://makecode.microbit.org/"
+                target="_blank"
+                rel="noopener"
+              >Open MakeCode</a>
+            </div>
+          </div>
+        </article>
+
+        <article id="substep-test" class="substep-card">
+          <div class="substep-heading">
+            <span class="substep-number">7</span>
+            <div>
+              <h3>Test je plantenmeter</h3>
+              <p>Controleer of de micro:bit hetzelfde beslist als jouw waterzones.</p>
+            </div>
+          </div>
+
+          <div class="test-table-wrap">
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>Test</th>
+                  <th>Sensorgetal</th>
+                  <th>Verwacht gezicht</th>
+                  <th>Gezicht op micro:bit</th>
+                  <th>Resultaat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-test-row="dry">
+                  <td>Droge aarde</td>
+                  <td><button class="secondary-button" type="button" data-test-capture="dry" disabled>Meet nu</button> <strong data-test-value="dry">--</strong></td>
+                  <td data-test-expected="dry">Verdrietig</td>
+                  <td>
+                    <select data-test-seen="dry">
+                      <option value="">Kies</option>
+                      <option value="sad">Verdrietig</option>
+                      <option value="happy">Blij</option>
+                    </select>
+                  </td>
+                  <td class="test-result" data-test-result="dry">--</td>
+                </tr>
+                <tr data-test-row="moist">
+                  <td>Vochtige aarde</td>
+                  <td><button class="secondary-button" type="button" data-test-capture="moist" disabled>Meet nu</button> <strong data-test-value="moist">--</strong></td>
+                  <td data-test-expected="moist">Blij</td>
+                  <td>
+                    <select data-test-seen="moist">
+                      <option value="">Kies</option>
+                      <option value="sad">Verdrietig</option>
+                      <option value="happy">Blij</option>
+                    </select>
+                  </td>
+                  <td class="test-result" data-test-result="moist">--</td>
+                </tr>
+                <tr data-test-row="wet">
+                  <td>Natte aarde</td>
+                  <td><button class="secondary-button" type="button" data-test-capture="wet" disabled>Meet nu</button> <strong data-test-value="wet">--</strong></td>
+                  <td data-test-expected="wet">Blij</td>
+                  <td>
+                    <select data-test-seen="wet">
+                      <option value="">Kies</option>
+                      <option value="sad">Verdrietig</option>
+                      <option value="happy">Blij</option>
+                    </select>
+                  </td>
+                  <td class="test-result" data-test-result="wet">--</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- R: REFLECTEREN -->
+    <section id="reflect" class="workflow-section" tabindex="-1">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">R · Reflecteren</p>
+          <h2>Werkt je plantenmeter?</h2>
+        </div>
+      </div>
+
+      <div class="reflection-grid">
+        <article class="reflection-card">
+          <h3>1. Wanneer is je micro:bit verdrietig?</h3>
+          <label>
+            Schrijf je antwoord.
+            <textarea
+              id="reflection-sad"
+              rows="4"
+              placeholder="Mijn micro:bit toont een verdrietig gezicht wanneer ..."
+            ></textarea>
+          </label>
+        </article>
+
+        <article class="reflection-card">
+          <h3>2. Wat zou je verbeteren?</h3>
+          <label>
+            Schrijf één idee.
+            <textarea
+              id="reflection-improve"
+              rows="4"
+              placeholder="Ik zou mijn plantenmeter beter maken door ..."
+            ></textarea>
+          </label>
+        </article>
+      </div>
+
+      <div class="completion-card">
+        <strong>Wat heb je gedaan?</strong>
+        <span>
+          Je voorspelde, bouwde, mat, vergeleek, programmeerde en testte.
+          Je gebruikte daarbij <strong>input → verwerking → output</strong> en de vier stappen van
+          <strong>OVUR</strong>.
+        </span>
+      </div>
+    </section>
+
+    <div class="workflow-actions workflow-actions-bottom" aria-label="Navigatie tussen stappen">
+      <span class="step-counter" data-step-counter-copy>Stap 1 van 4</span>
+      <div>
+        <button class="secondary-button" type="button" data-step-prev>Vorige</button>
+        <button class="primary-button" type="button" data-step-next>Volgende</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- HULP -->
+  <div id="overlay-help" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal">
+      <button id="btn-close-help" class="close-button" type="button" aria-label="Sluit hulp">x</button>
+      <p class="eyebrow">Hulp</p>
+      <h2 id="help-title">Smart Plants Light</h2>
+      <ol>
+        <li><strong>Oriënteren:</strong> ontdek de uitdaging en voorspel wat de sensor zal meten.</li>
+        <li><strong>Voorbereiden:</strong> bouw de schakeling met het schema.</li>
+        <li><strong>Uitvoeren:</strong> meet droog, nat en vochtig. Maak daarna de ALS-ANDERS-regel.</li>
+        <li><strong>Reflecteren:</strong> test de plantenmeter en schrijf wat je geleerd hebt.</li>
+      </ol>
+      <p>
+        De sensor is de <strong>input</strong>, de ALS-ANDERS-regel is de
+        <strong>verwerking</strong> en het ledgezicht is de <strong>output</strong>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Auteur: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert. Alle rechten voorbehouden.</p>
+  </footer>
+
+  <script>
+    class LineBreakTransformer {
+      constructor() {
+        this.container = "";
+      }
+
+      transform(chunk, controller) {
+        this.container += chunk;
+        const lines = this.container.split(/\r?\n/);
+        this.container = lines.pop();
+        lines.forEach((line) => controller.enqueue(line));
+      }
+
+      flush(controller) {
+        if (this.container) controller.enqueue(this.container);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        currentStepIndex: 0,
+        port: null,
+        reader: null,
+        serialLoopActive: false,
+        latestValue: null,
+        latestLine: "",
+        dryReadings: [],
+        wetReadings: [],
+        moistReadings: [],
+        dryAverage: null,
+        wetAverage: null,
+        moistAverage: null,
+        direction: "unknown",
+        dryThreshold: null,
+        wetThreshold: null,
+        prediction: "",
+        tests: {
+          dry: { value: null, seen: "" },
+          moist: { value: null, seen: "" },
+          wet: { value: null, seen: "" },
+        },
+      };
+
+      const els = {
+        compatibilityNotice: $("compatibility-notice"),
+        connectionStatus: $("connection-status"),
+        serialStatus: $("serial-status"),
+        serialPreview: $("serial-preview"),
+        liveValue: $("live-value"),
+        workflowLinks: [...document.querySelectorAll("[data-step-link]")],
+        workflowSections: [...document.querySelectorAll(".workflow-section")],
+        stepPrevButtons: [...document.querySelectorAll("[data-step-prev]")],
+        stepNextButtons: [...document.querySelectorAll("[data-step-next]")],
+        stepCounters: [$("step-counter"), ...document.querySelectorAll("[data-step-counter-copy]")].filter(Boolean),
+        ipoCards: [...document.querySelectorAll("[data-ipo]")],
+        buildChecklist: $("build-checklist"),
+        predictionValue: $("prediction-value"),
+        predictionButtons: [...document.querySelectorAll("[data-prediction]")],
+        btnConnect: $("btn-connect"),
+        drySlots: $("dry-slots"),
+        wetSlots: $("wet-slots"),
+        moistSlots: $("moist-slots"),
+        btnCaptureDry: $("btn-capture-dry"),
+        btnCaptureWet: $("btn-capture-wet"),
+        btnCaptureMoist: $("btn-capture-moist"),
+        btnResetDry: $("btn-reset-dry"),
+        btnResetWet: $("btn-reset-wet"),
+        btnResetMoist: $("btn-reset-moist"),
+        dryAverage: $("dry-average"),
+        wetAverage: $("wet-average"),
+        moistAverage: $("moist-average"),
+        zonesPending: $("zones-pending"),
+        zonesReady: $("zones-ready"),
+        zoneDryRange: $("zone-dry-range"),
+        zoneGoodRange: $("zone-good-range"),
+        zoneWetRange: $("zone-wet-range"),
+        directionNote: $("direction-note"),
+        moistCheck: $("moist-check"),
+        logicInput: $("logic-input"),
+        logicProcessing: $("logic-processing"),
+        logicOutput: $("logic-output"),
+        makecodeCondition: $("makecode-condition"),
+        generatedCode: $("generated-code"),
+        btnCopyCode: $("btn-copy-code"),
+        btnHelp: $("btn-help"),
+        btnCloseHelp: $("btn-close-help"),
+        overlayHelp: $("overlay-help"),
+        reflectionSad: $("reflection-sad"),
+        reflectionImprove: $("reflection-improve"),
+        testCaptureButtons: [...document.querySelectorAll("[data-test-capture]")],
+        testSeenSelects: [...document.querySelectorAll("[data-test-seen]")],
+      };
+
+      initialize();
+
+      function initialize() {
+        document.body.classList.add("workflow-ready");
+        renderReadingSlots("dry");
+        renderReadingSlots("wet");
+        renderReadingSlots("moist");
+        bindEvents();
+        updateCompatibilityNotice();
+        updateCalibration();
+        updateControls();
+        showWorkflowStep(0, { scroll: false });
+      }
+
+      function bindEvents() {
+        els.predictionButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            state.prediction = button.dataset.prediction || "";
+            els.predictionValue.value = state.prediction;
+            els.predictionButtons.forEach((candidate) => {
+              candidate.classList.toggle("is-selected", candidate === button);
+            });
+            updateWorkflowState();
+          });
+        });
+
+        els.workflowLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            const index = workflowIndexForId(link.dataset.stepLink);
+            if (index >= 0) showWorkflowStep(index);
+          });
+        });
+
+        els.stepPrevButtons.forEach((button) => {
+          button.addEventListener("click", () => showWorkflowStep(state.currentStepIndex - 1));
+        });
+
+        els.stepNextButtons.forEach((button) => {
+          button.addEventListener("click", () => showWorkflowStep(state.currentStepIndex + 1));
+        });
+
+        els.btnConnect.addEventListener("click", connectSerial);
+
+        els.btnCaptureDry.addEventListener("click", () => captureReading("dry"));
+        els.btnCaptureWet.addEventListener("click", () => captureReading("wet"));
+        els.btnCaptureMoist.addEventListener("click", () => captureReading("moist"));
+
+        els.btnResetDry.addEventListener("click", () => resetReadings("dry"));
+        els.btnResetWet.addEventListener("click", () => resetReadings("wet"));
+        els.btnResetMoist.addEventListener("click", () => resetReadings("moist"));
+
+        els.btnCopyCode.addEventListener("click", copyGeneratedCode);
+
+        els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hidden"));
+        els.btnCloseHelp.addEventListener("click", () => els.overlayHelp.classList.add("hidden"));
+
+        els.overlayHelp.addEventListener("click", (event) => {
+          if (event.target === els.overlayHelp) els.overlayHelp.classList.add("hidden");
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") els.overlayHelp.classList.add("hidden");
+        });
+
+        if (els.buildChecklist) {
+          [...els.buildChecklist.querySelectorAll("input[type='checkbox']")].forEach((input) => {
+            input.addEventListener("change", updateWorkflowState);
+          });
+        }
+
+        els.testCaptureButtons.forEach((button) => {
+          button.addEventListener("click", () => captureTest(button.dataset.testCapture));
+        });
+
+        els.testSeenSelects.forEach((select) => {
+          select.addEventListener("change", () => {
+            const kind = select.dataset.testSeen;
+            state.tests[kind].seen = select.value;
+            renderTestResult(kind);
+            updateWorkflowState();
+          });
+        });
+
+        [els.reflectionSad, els.reflectionImprove].forEach((input) => {
+          input.addEventListener("input", updateWorkflowState);
+        });
+      }
+
+      function updateCompatibilityNotice() {
+        const messages = [];
+
+        if (!window.isSecureContext) {
+          messages.push("De micro:bit kan alleen verbinden via HTTPS, GitHub Pages of localhost.");
+        }
+
+        if (!("serial" in navigator)) {
+          messages.push("Deze browser ondersteunt WebSerial niet. Gebruik Chrome of Edge.");
+        }
+
+        if (messages.length) {
+          els.compatibilityNotice.classList.remove("hidden");
+          els.compatibilityNotice.innerHTML = messages.map((message) => `<p>${escapeHtml(message)}</p>`).join("");
+        }
+      }
+
+      async function connectSerial() {
+        if (!("serial" in navigator)) {
+          setSerialStatus("WebSerial werkt niet in deze browser.", "error");
+          return;
+        }
+
+        try {
+          if (state.reader) {
+            await disconnectSerial();
+            return;
+          }
+
+          state.port = await navigator.serial.requestPort();
+          await state.port.open({ baudRate: 115200 });
+
+          state.serialLoopActive = true;
+          setSerialStatus("micro:bit verbonden", "ok");
+          els.connectionStatus.textContent = "micro:bit verbonden";
+          els.btnConnect.textContent = "Verbreek verbinding";
+
+          readSerialLoop();
+        } catch (error) {
+          console.error(error);
+          setSerialStatus("Verbinden lukte niet.", "error");
+          els.connectionStatus.textContent = "Niet verbonden";
+        }
+
+        updateControls();
+      }
+
+      async function disconnectSerial() {
+        state.serialLoopActive = false;
+
+        if (state.reader) {
+          try {
+            await state.reader.cancel();
+          } catch (error) {
+            console.warn(error);
+          }
+        }
+
+        if (state.port) {
+          try {
+            await state.port.close();
+          } catch (error) {
+            console.warn(error);
+          }
+        }
+
+        state.reader = null;
+        state.port = null;
+        setSerialStatus("Niet verbonden");
+        els.connectionStatus.textContent = "Niet verbonden";
+        els.btnConnect.textContent = "Verbind micro:bit";
+        updateControls();
+      }
+
+      async function readSerialLoop() {
+        if (!state.port?.readable) return;
+
+        const textDecoder = new TextDecoderStream();
+        const readableStreamClosed = state.port.readable.pipeTo(textDecoder.writable);
+        state.reader = textDecoder.readable
+          .pipeThrough(new TransformStream(new LineBreakTransformer()))
+          .getReader();
+
+        try {
+          while (state.serialLoopActive) {
+            const { value, done } = await state.reader.read();
+            if (done) break;
+            if (typeof value === "string") parseSerialLine(value);
+          }
+        } catch (error) {
+          if (state.serialLoopActive) {
+            console.error(error);
+            setSerialStatus("De verbinding werd onderbroken.", "error");
+          }
+        } finally {
+          try {
+            state.reader?.releaseLock();
+          } catch (error) {
+            console.warn(error);
+          }
+
+          state.reader = null;
+
+          try {
+            await readableStreamClosed.catch(() => {});
+          } catch (error) {
+            console.warn(error);
+          }
+
+          if (state.serialLoopActive) {
+            state.serialLoopActive = false;
+            state.port = null;
+            els.connectionStatus.textContent = "Niet verbonden";
+            els.btnConnect.textContent = "Verbind micro:bit";
+            updateControls();
+          }
+        }
+      }
+
+      function parseSerialLine(line) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) return;
+
+        state.latestLine = trimmed;
+        els.serialPreview.textContent = `Laatste regel: ${trimmed}`;
+
+        const values = trimmed.split(",").map((part) => Number(part.trim()));
+        if (values.length < 2 || !Number.isFinite(values[1])) return;
+
+        const raw = Math.max(0, Math.min(1023, Math.round(values[1])));
+        state.latestValue = raw;
+        els.liveValue.textContent = raw;
+
+        updateLogicDemo();
+        updateControls();
+      }
+
+      function captureReading(kind) {
+        if (!Number.isFinite(state.latestValue)) return;
+
+        const key = `${kind}Readings`;
+        if (state[key].length >= 3) return;
+
+        state[key].push(state.latestValue);
+        renderReadingSlots(kind);
+        updateCalibration();
+        updateControls();
+        updateWorkflowState();
+      }
+
+      function resetReadings(kind) {
+        state[`${kind}Readings`] = [];
+        state[`${kind}Average`] = null;
+
+        if (kind === "dry" || kind === "wet") {
+          state.direction = "unknown";
+          state.dryThreshold = null;
+          state.wetThreshold = null;
+          state.moistReadings = [];
+          state.moistAverage = null;
+          renderReadingSlots("moist");
+        }
+
+        renderReadingSlots(kind);
+        updateCalibration();
+        updateControls();
+        updateWorkflowState();
+      }
+
+      function renderReadingSlots(kind) {
+        const container = els[`${kind}Slots`];
+        const readings = state[`${kind}Readings`];
+
+        container.innerHTML = [0, 1, 2].map((index) => {
+          const hasValue = Number.isFinite(readings[index]);
+          return `
+            <div class="reading-slot ${hasValue ? "has-value" : ""}">
+              <div>
+                <span>Meting ${index + 1}</span>
+                <strong>${hasValue ? readings[index] : "--"}</strong>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function updateCalibration() {
+        state.dryAverage = averageWhenComplete(state.dryReadings);
+        state.wetAverage = averageWhenComplete(state.wetReadings);
+        state.moistAverage = averageWhenComplete(state.moistReadings);
+
+        els.dryAverage.textContent = formatOptional(state.dryAverage);
+        els.wetAverage.textContent = formatOptional(state.wetAverage);
+        els.moistAverage.textContent = formatOptional(state.moistAverage);
+
+        calculateThresholds();
+        renderZones();
+        renderMoistCheck();
+        renderGeneratedCode();
+        updateLogicDemo();
+
+        document.getElementById("substep-dry").classList.toggle("is-complete", Number.isFinite(state.dryAverage));
+        document.getElementById("substep-wet").classList.toggle("is-complete", Number.isFinite(state.wetAverage));
+        document.getElementById("substep-zones").classList.toggle("is-complete", thresholdsReady());
+        document.getElementById("substep-moist").classList.toggle("is-complete", Number.isFinite(state.moistAverage));
+
+        updateWorkflowState();
+      }
+
+      function calculateThresholds() {
+        if (!Number.isFinite(state.dryAverage) || !Number.isFinite(state.wetAverage)) {
+          state.direction = "unknown";
+          state.dryThreshold = null;
+          state.wetThreshold = null;
+          return;
+        }
+
+        if (state.dryAverage === state.wetAverage) {
+          state.direction = "same";
+          state.dryThreshold = null;
+          state.wetThreshold = null;
+          return;
+        }
+
+        state.direction = state.wetAverage > state.dryAverage
+          ? "higher_is_wetter"
+          : "lower_is_wetter";
+
+        state.dryThreshold = Math.round((2 * state.dryAverage + state.wetAverage) / 3);
+        state.wetThreshold = Math.round((state.dryAverage + 2 * state.wetAverage) / 3);
+      }
+
+      function renderZones() {
+        if (!thresholdsReady()) {
+          els.zonesPending.classList.remove("hidden");
+          els.zonesReady.classList.add("hidden");
+
+          if (state.direction === "same") {
+            els.zonesPending.textContent =
+              "Droge en natte aarde geven bijna hetzelfde gemiddelde. Controleer de opstelling en meet opnieuw.";
+          } else {
+            els.zonesPending.textContent =
+              "Meet eerst drie keer droge en drie keer natte aarde.";
+          }
+          return;
+        }
+
+        els.zonesPending.classList.add("hidden");
+        els.zonesReady.classList.remove("hidden");
+
+        if (state.direction === "lower_is_wetter") {
+          els.zoneDryRange.textContent = `meer dan ${state.dryThreshold}`;
+          els.zoneGoodRange.textContent = `${state.wetThreshold + 1} tot ${state.dryThreshold}`;
+          els.zoneWetRange.textContent = `${state.wetThreshold} of minder`;
+          els.directionNote.textContent =
+            "Bij jouw sensor betekent een lager getal: nattere aarde.";
+        } else {
+          els.zoneDryRange.textContent = `${state.dryThreshold - 1} of minder`;
+          els.zoneGoodRange.textContent = `${state.dryThreshold} tot ${state.wetThreshold - 1}`;
+          els.zoneWetRange.textContent = `${state.wetThreshold} of meer`;
+          els.directionNote.textContent =
+            "Bij jouw sensor betekent een hoger getal: nattere aarde.";
+        }
+      }
+
+      function renderMoistCheck() {
+        if (!Number.isFinite(state.moistAverage)) {
+          els.moistCheck.textContent = "Nog niet getest.";
+          return;
+        }
+
+        if (!thresholdsReady()) {
+          els.moistCheck.textContent = "Meet eerst droge en natte aarde.";
+          return;
+        }
+
+        const category = categorize(state.moistAverage);
+        if (category === "Genoeg water") {
+          els.moistCheck.textContent =
+            `Goed: ${state.moistAverage} valt in de middelste zone “Genoeg water”.`;
+        } else {
+          els.moistCheck.textContent =
+            `${state.moistAverage} valt in de zone “${category}”. Controleer of de aarde echt licht vochtig was en meet eventueel opnieuw.`;
+        }
+      }
+
+      function categorize(value) {
+        if (!Number.isFinite(value) || !thresholdsReady()) return "Onbekend";
+
+        if (state.direction === "lower_is_wetter") {
+          if (value > state.dryThreshold) return "Droog";
+          if (value <= state.wetThreshold) return "Heel nat";
+          return "Genoeg water";
+        }
+
+        if (value < state.dryThreshold) return "Droog";
+        if (value >= state.wetThreshold) return "Heel nat";
+        return "Genoeg water";
+      }
+
+      function updateLogicDemo() {
+        const value = state.latestValue;
+        els.logicInput.textContent = Number.isFinite(value) ? value : "--";
+
+        if (!Number.isFinite(value) || !thresholdsReady()) {
+          els.logicProcessing.textContent = "Meet eerst droog en nat";
+          els.logicOutput.textContent = "--";
+          return;
+        }
+
+        const isDry = categorize(value) === "Droog";
+        const symbol = state.direction === "lower_is_wetter" ? ">" : "<";
+
+        els.logicProcessing.textContent =
+          `${value} ${symbol} ${state.dryThreshold} ?`;
+        els.logicOutput.textContent = isDry ? "Verdrietig" : "Blij";
+      }
+
+      function renderGeneratedCode() {
+        if (!thresholdsReady()) {
+          els.makecodeCondition.textContent =
+            "Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.";
+          els.generatedCode.textContent = "Meet eerst droge en natte aarde.";
+          els.btnCopyCode.disabled = true;
+          return;
+        }
+
+        const operator = state.direction === "lower_is_wetter" ? ">" : "<";
+        els.makecodeCondition.innerHTML =
+          `Controleer: <strong>als water ${operator} ${state.dryThreshold}</strong>, dan is de aarde droog.`;
+
+        els.generatedCode.textContent =
+`serial.redirectToUSB()
+serial.setBaudRate(BaudRate.BaudRate115200)
+
+basic.forever(function () {
+    let water = pins.analogReadPin(AnalogPin.P0)
+
+    serial.writeLine("" + input.runningTime() + "," + water)
+
+    if (water ${operator} ${state.dryThreshold}) {
+        basic.showIcon(IconNames.Sad)
+    } else {
+        basic.showIcon(IconNames.Happy)
+    }
+
+    basic.pause(1000)
+})`;
+
+        els.btnCopyCode.disabled = false;
+      }
+
+      async function copyGeneratedCode() {
+        if (!thresholdsReady()) return;
+
+        try {
+          await navigator.clipboard.writeText(els.generatedCode.textContent);
+          const original = els.btnCopyCode.textContent;
+          els.btnCopyCode.textContent = "Gekopieerd";
+          window.setTimeout(() => {
+            els.btnCopyCode.textContent = original;
+          }, 1500);
+        } catch (error) {
+          console.error(error);
+          els.btnCopyCode.textContent = "Kopiëren lukte niet";
+        }
+      }
+
+      function captureTest(kind) {
+        if (!Number.isFinite(state.latestValue) || !thresholdsReady()) return;
+        state.tests[kind].value = state.latestValue;
+        const output = document.querySelector(`[data-test-value="${kind}"]`);
+        output.textContent = state.latestValue;
+        renderTestResult(kind);
+        updateWorkflowState();
+      }
+
+      function renderTestResult(kind) {
+        const test = state.tests[kind];
+        const output = document.querySelector(`[data-test-result="${kind}"]`);
+
+        if (!Number.isFinite(test.value)) {
+          output.textContent = "--";
+          return;
+        }
+
+        const expectedFromReading = categorize(test.value) === "Droog" ? "sad" : "happy";
+
+        if (!test.seen) {
+          output.textContent = `Verwacht: ${expectedFromReading === "sad" ? "verdrietig" : "blij"}`;
+          return;
+        }
+
+        output.textContent = test.seen === expectedFromReading ? "Klopt" : "Controleer opnieuw";
+      }
+
+      function updateControls() {
+        const hasValue = Number.isFinite(state.latestValue);
+
+        els.btnCaptureDry.disabled = !hasValue || state.dryReadings.length >= 3;
+        els.btnCaptureWet.disabled = !hasValue || state.wetReadings.length >= 3;
+        els.btnCaptureMoist.disabled =
+          !hasValue || !thresholdsReady() || state.moistReadings.length >= 3;
+
+        els.testCaptureButtons.forEach((button) => {
+          button.disabled = !hasValue || !thresholdsReady();
+        });
+
+        document.getElementById("substep-connect").classList.toggle("is-complete", hasValue);
+        document.getElementById("substep-logic").classList.toggle("is-complete", thresholdsReady());
+      }
+
+      function updateWorkflowState() {
+        const buildChecks = els.buildChecklist
+          ? [...els.buildChecklist.querySelectorAll("input[type='checkbox']")]
+          : [];
+
+        const testsComplete = Object.values(state.tests).every((test) =>
+          Number.isFinite(test.value) && Boolean(test.seen)
+        );
+
+        const complete = {
+          orient: Boolean(state.prediction),
+          prepare: buildChecks.length > 0 && buildChecks.every((input) => input.checked),
+          execute:
+            thresholdsReady() &&
+            Number.isFinite(state.moistAverage) &&
+            testsComplete,
+          reflect:
+            Boolean(els.reflectionSad.value.trim() && els.reflectionImprove.value.trim()),
+        };
+
+        els.workflowLinks.forEach((link) => {
+          link.classList.toggle("is-complete", Boolean(complete[link.dataset.stepLink]));
+        });
+
+        document.getElementById("substep-test").classList.toggle("is-complete", testsComplete);
+      }
+
+      function showWorkflowStep(index, options = {}) {
+        const nextIndex = Math.min(Math.max(index, 0), els.workflowSections.length - 1);
+        state.currentStepIndex = nextIndex;
+
+        els.workflowSections.forEach((section, sectionIndex) => {
+          const active = sectionIndex === nextIndex;
+          section.classList.toggle("is-active-step", active);
+          section.hidden = !active;
+        });
+
+        const activeSection = els.workflowSections[nextIndex];
+        els.workflowLinks.forEach((link) => {
+          link.classList.toggle("is-active", link.dataset.stepLink === activeSection.id);
+        });
+
+        updateStepNavigation();
+        updateIpoHighlight(activeSection.id);
+
+        if (options.scroll !== false) {
+          document.querySelector(".app-shell").scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+          activeSection.focus({ preventScroll: true });
+        }
+      }
+
+      function updateStepNavigation() {
+        const total = els.workflowSections.length;
+        const current = state.currentStepIndex + 1;
+        const activeSection = els.workflowSections[state.currentStepIndex];
+        const title = activeSection?.querySelector("h2")?.textContent || "";
+
+        els.stepCounters.forEach((counter) => {
+          counter.textContent = `Stap ${current} van ${total}: ${title}`;
+        });
+
+        els.stepPrevButtons.forEach((button) => {
+          button.disabled = state.currentStepIndex === 0;
+        });
+
+        els.stepNextButtons.forEach((button) => {
+          const isLast = state.currentStepIndex === total - 1;
+          button.disabled = isLast;
+          button.textContent = isLast ? "Laatste stap" : "Volgende";
+        });
+      }
+
+      function updateIpoHighlight(stepId) {
+        els.ipoCards.forEach((card) => card.classList.remove("is-active"));
+
+        if (stepId === "prepare") {
+          document.querySelector('[data-ipo="input"]').classList.add("is-active");
+        }
+
+        if (stepId === "execute") {
+          els.ipoCards.forEach((card) => card.classList.add("is-active"));
+        }
+
+        if (stepId === "reflect") {
+          document.querySelector('[data-ipo="output"]').classList.add("is-active");
+        }
+      }
+
+      function workflowIndexForId(id) {
+        return els.workflowSections.findIndex((section) => section.id === id);
+      }
+
+      function thresholdsReady() {
+        return Number.isFinite(state.dryThreshold) &&
+          Number.isFinite(state.wetThreshold) &&
+          ["lower_is_wetter", "higher_is_wetter"].includes(state.direction);
+      }
+
+      function averageWhenComplete(values) {
+        if (!Array.isArray(values) || values.length < 3) return null;
+        return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+      }
+
+      function formatOptional(value) {
+        return Number.isFinite(value) ? String(Math.round(value)) : "--";
+      }
+
+      function setSerialStatus(message, level = "") {
+        els.serialStatus.textContent = message;
+        els.serialStatus.classList.remove("is-ok", "is-error");
+        if (level === "ok") els.serialStatus.classList.add("is-ok");
+        if (level === "error") els.serialStatus.classList.add("is-error");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+    });
+  </script>
+</body>
+</html>
