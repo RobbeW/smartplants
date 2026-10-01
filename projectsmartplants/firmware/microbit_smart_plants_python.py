@@ -1,6 +1,4 @@
-from microbit import *
-
-# Project Smart Plants - micro:bit Python
+# Project Smart Plants - MakeCode Python
 #
 # Deze code leest de bodemvochtsensor uit
 # en stuurt de meetwaarde naar het Smart Plants-platform.
@@ -20,12 +18,17 @@ from microbit import *
 # Daarna bepalen we de grenzen tussen:
 # droog - halfdroog - nat.
 
-uart.init(baudrate=115200)
 
-while True:
-    tijd_ms = running_time()
-    raw = pin0.read_analog()
 
-    uart.write(str(tijd_ms) + "," + str(raw) + "\n")
+serial.redirect_to_usb()
+serial.set_baud_rate(BaudRate.BAUD_RATE115200)
 
-    sleep(1000)
+def on_forever():
+    tijd_ms = input.running_time()
+    raw = pins.analog_read_pin(AnalogPin.P0)
+
+    serial.write_line(str(tijd_ms) + "," + str(raw))
+
+    basic.pause(1000)
+
+basic.forever(on_forever)
