@@ -518,31 +518,317 @@
       font-weight: 900;
     }
 
-    .test-table-wrap {
-      overflow-x: auto;
+    .decision-viewer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.75fr);
+      gap: 1rem;
+      align-items: stretch;
     }
 
-    .test-table {
+    .live-chart-card,
+    .microbit-card {
+      border: 1px solid var(--light-line);
+      border-radius: var(--light-radius);
+      background: #ffffff;
+    }
+
+    .live-chart-card {
+      padding: 1rem;
+    }
+
+    .chart-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+    }
+
+    .chart-toolbar-copy {
+      display: grid;
+      gap: 0.18rem;
+    }
+
+    .chart-toolbar-copy span {
+      color: var(--primary);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .chart-toolbar-copy strong {
+      color: #241b36;
+      font-size: 1.05rem;
+    }
+
+    .chart-toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.45rem;
+    }
+
+    .chart-shell {
+      position: relative;
+      min-height: 300px;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .chart-shell svg {
+      display: block;
       width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
+      height: auto;
+      min-height: 300px;
     }
 
-    .test-table th,
-    .test-table td {
-      padding: 0.7rem;
-      border-bottom: 1px solid var(--light-line);
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    .test-table th {
+    .chart-note {
+      margin: 0.75rem 0 0;
       color: var(--muted);
       font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.45;
     }
 
-    .test-result {
+    .microbit-card {
+      display: grid;
+      align-content: start;
+      gap: 0.85rem;
+      padding: 1rem;
+    }
+
+    .viewer-reading {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.65rem;
+      align-items: center;
+      border: 1px solid var(--light-line);
+      border-radius: 10px;
+      padding: 0.85rem;
+      background: var(--light-soft);
+    }
+
+    .viewer-reading-copy {
+      display: grid;
+      gap: 0.1rem;
+    }
+
+    .viewer-reading-copy span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .viewer-reading-copy strong {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1;
+      color: #241b36;
+    }
+
+    .current-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.25rem;
+      border-radius: 999px;
+      padding: 0.4rem 0.7rem;
+      background: #f2eff7;
+      color: #4a4256;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .current-zone.is-dry {
+      background: var(--light-danger);
+      color: #8d1531;
+    }
+
+    .current-zone.is-semi {
+      background: var(--light-warn);
+      color: #6b4a00;
+    }
+
+    .current-zone.is-wet {
+      background: #e9fbff;
+      color: #07586b;
+    }
+
+    .microbit-simulator {
+      display: grid;
+      justify-items: center;
+      gap: 0.7rem;
+    }
+
+    .microbit-board {
+      width: min(250px, 100%);
+      border-radius: 20px 20px 28px 28px;
+      padding: 1rem 1rem 0.8rem;
+      background: #251445;
+      box-shadow: 0 12px 28px rgba(37, 20, 69, 0.16);
+    }
+
+    .microbit-brand {
+      margin-bottom: 0.65rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.78rem;
       font-weight: 850;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    .microbit-display {
+      width: min(150px, 72%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.38rem;
+      aspect-ratio: 1;
+      padding: 0.55rem;
+    }
+
+    .microbit-led {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .microbit-led.is-on {
+      background: #ff466c;
+      box-shadow: 0 0 10px rgba(255, 70, 108, 0.58);
+    }
+
+    .microbit-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.4rem 0.8rem 0;
+    }
+
+    .microbit-button {
+      width: 1.8rem;
+      height: 1.8rem;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      border-radius: 50%;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+
+    .microbit-pins {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+      margin-top: 0.8rem;
+    }
+
+    .microbit-pins span {
+      height: 0.34rem;
+      border-radius: 999px;
+      background: #d6b04e;
+      opacity: 0.92;
+    }
+
+    .face-label {
+      margin: 0;
+      color: #241b36;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .threshold-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .threshold-mini-grid > div {
+      display: grid;
+      gap: 0.08rem;
+      border: 1px solid var(--light-line);
+      border-radius: 9px;
+      padding: 0.65rem;
+      background: #fbfaff;
+    }
+
+    .threshold-mini-grid span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .threshold-mini-grid strong {
+      color: #241b36;
+      font-size: 1.05rem;
+    }
+
+    .state-legend {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.45rem;
+    }
+
+    .state-face {
+      display: grid;
+      justify-items: center;
+      gap: 0.4rem;
+      border: 1px solid var(--light-line);
+      border-radius: 9px;
+      padding: 0.55rem 0.35rem;
+      background: #fff;
+      opacity: 0.58;
+      transition: opacity 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+
+    .state-face.is-active {
+      opacity: 1;
+      border-color: rgba(82, 0, 255, 0.4);
+      background: var(--light-soft);
+      box-shadow: 0 0 0 2px rgba(82, 0, 255, 0.06);
+    }
+
+    .mini-led-grid {
+      width: 58px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.16rem;
+      aspect-ratio: 1;
+      border-radius: 7px;
+      padding: 0.34rem;
+      background: #251445;
+    }
+
+    .mini-led-grid span {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .mini-led-grid span.is-on {
+      background: #ff466c;
+    }
+
+    .state-face strong {
+      font-size: 0.78rem;
+      text-align: center;
+    }
+
+    .viewer-task {
+      margin-top: 1rem;
+      border-left: 5px solid var(--accent);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      background: #f0fcff;
+      color: #273545;
+      line-height: 1.5;
+    }
+
+    .viewer-task strong {
+      color: #241b36;
     }
 
     .inline-status {
@@ -611,7 +897,8 @@
       .platform-light .workflow-nav,
       .schema-light-layout,
       .reflection-grid,
-      .sensor-live {
+      .sensor-live,
+      .decision-viewer-grid {
         grid-template-columns: 1fr;
       }
 
@@ -989,65 +1276,98 @@
           <div class="substep-heading">
             <span class="substep-number">7</span>
             <div>
-              <h3>Test je plantenmeter</h3>
-              <p>Controleer of de micro:bit hetzelfde beslist als jouw waterzones.</p>
+              <h3>Kijk hoe je plantenmeter beslist</h3>
+              <p>
+                Beweeg de sensor tussen droge, halfdroge en natte aarde.
+                Kijk hoe de meetwaarde, de waterzone en het gezicht samen veranderen.
+              </p>
             </div>
           </div>
 
-          <div class="test-table-wrap">
-            <table class="test-table">
-              <thead>
-                <tr>
-                  <th>Test</th>
-                  <th>Sensorgetal</th>
-                  <th>Verwacht gezicht</th>
-                  <th>Gezicht op micro:bit</th>
-                  <th>Resultaat</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr data-test-row="dry">
-                  <td>Droge aarde</td>
-                  <td><button class="secondary-button" type="button" data-test-capture="dry" disabled>Meet nu</button> <strong data-test-value="dry">--</strong></td>
-                  <td data-test-expected="dry">Verdrietig</td>
-                  <td>
-                    <select data-test-seen="dry">
-                      <option value="">Kies</option>
-                      <option value="sad">Verdrietig</option>
-                      <option value="happy">Blij</option>
-                    </select>
-                  </td>
-                  <td class="test-result" data-test-result="dry">--</td>
-                </tr>
-                <tr data-test-row="moist">
-                  <td>Halfdroge aarde</td>
-                  <td><button class="secondary-button" type="button" data-test-capture="moist" disabled>Meet nu</button> <strong data-test-value="moist">--</strong></td>
-                  <td data-test-expected="moist">Neutraal (-_-)</td>
-                  <td>
-                    <select data-test-seen="moist">
-                      <option value="">Kies</option>
-                      <option value="sad">Verdrietig</option>
-                      <option value="neutral">Neutraal (-_-)</option>
-                      <option value="happy">Blij</option>
-                    </select>
-                  </td>
-                  <td class="test-result" data-test-result="moist">--</td>
-                </tr>
-                <tr data-test-row="wet">
-                  <td>Natte aarde</td>
-                  <td><button class="secondary-button" type="button" data-test-capture="wet" disabled>Meet nu</button> <strong data-test-value="wet">--</strong></td>
-                  <td data-test-expected="wet">Blij</td>
-                  <td>
-                    <select data-test-seen="wet">
-                      <option value="">Kies</option>
-                      <option value="sad">Verdrietig</option>
-                      <option value="happy">Blij</option>
-                    </select>
-                  </td>
-                  <td class="test-result" data-test-result="wet">--</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="decision-viewer-grid">
+            <div class="live-chart-card">
+              <div class="chart-toolbar">
+                <div class="chart-toolbar-copy">
+                  <span>Live grafiek</span>
+                  <strong>Sensorwaarde door de tijd</strong>
+                </div>
+                <div class="chart-toolbar-actions">
+                  <button id="btn-pause-graph" class="secondary-button" type="button">Pauzeer grafiek</button>
+                  <button id="btn-clear-graph" class="secondary-button" type="button">Wis grafiek</button>
+                </div>
+              </div>
+
+              <div class="chart-shell">
+                <svg
+                  id="live-decision-chart"
+                  viewBox="0 0 760 320"
+                  role="img"
+                  aria-label="Live grafiek van de bodemvochtsensor met de zones droog, halfdroog en nat"
+                ></svg>
+              </div>
+
+              <p class="chart-note">
+                De gekleurde zones komen uit jouw eigen metingen.
+                De paarse stip toont de nieuwste waarde in de grafiek.
+              </p>
+            </div>
+
+            <aside class="microbit-card" aria-label="Simulatie van de micro:bit-uitvoer">
+              <div class="viewer-reading">
+                <div class="viewer-reading-copy">
+                  <span>Sensorwaarde nu</span>
+                  <strong id="viewer-current-value">--</strong>
+                </div>
+                <span id="viewer-current-zone" class="current-zone" aria-live="polite">Nog geen zone</span>
+              </div>
+
+              <div class="microbit-simulator">
+                <div class="microbit-board" aria-label="micro:bit met gesimuleerde ledmatrix">
+                  <div class="microbit-brand">micro:bit</div>
+                  <div id="microbit-display" class="microbit-display" aria-hidden="true"></div>
+                  <div class="microbit-buttons" aria-hidden="true">
+                    <span class="microbit-button">A</span>
+                    <span class="microbit-button">B</span>
+                  </div>
+                  <div class="microbit-pins" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+                <p id="microbit-face-label" class="face-label">Wacht op een meetwaarde.</p>
+              </div>
+
+              <div class="threshold-mini-grid" aria-label="Jouw twee grenswaarden">
+                <div>
+                  <span>Grens droog / halfdroog</span>
+                  <strong id="viewer-dry-threshold">--</strong>
+                </div>
+                <div>
+                  <span>Grens halfdroog / nat</span>
+                  <strong id="viewer-wet-threshold">--</strong>
+                </div>
+              </div>
+
+              <div class="state-legend" aria-label="De drie mogelijke gezichten">
+                <div class="state-face" data-face-state="sad">
+                  <div class="mini-led-grid" data-mini-face="sad" aria-hidden="true"></div>
+                  <strong>Droog</strong>
+                </div>
+                <div class="state-face" data-face-state="neutral">
+                  <div class="mini-led-grid" data-mini-face="neutral" aria-hidden="true"></div>
+                  <strong>Halfdroog</strong>
+                </div>
+                <div class="state-face" data-face-state="happy">
+                  <div class="mini-led-grid" data-mini-face="happy" aria-hidden="true"></div>
+                  <strong>Nat</strong>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="viewer-task">
+            <strong>Kijk en onderzoek.</strong>
+            Beweeg de sensor rustig van drogere naar nattere aarde.
+            Kijk wanneer de paarse lijn een andere zone binnenkomt en wanneer het gezicht verandert.
           </div>
         </article>
       </div>
@@ -1108,7 +1428,7 @@
         <li><strong>Oriënteren:</strong> ontdek de uitdaging en voorspel wat de sensor zal meten.</li>
         <li><strong>Voorbereiden:</strong> bouw de schakeling met het schema.</li>
         <li><strong>Uitvoeren:</strong> meet droog, nat en vochtig. Maak daarna de ALS-ANDERS-regel.</li>
-        <li><strong>Reflecteren:</strong> test de plantenmeter en schrijf wat je geleerd hebt.</li>
+        <li><strong>Reflecteren:</strong> bekijk de live grafiek en schrijf wat je geleerd hebt.</li>
       </ol>
       <p>
         De sensor is de <strong>input</strong>, de ALS-ANDERS-regel is de
@@ -1161,11 +1481,9 @@
         dryThreshold: null,
         wetThreshold: null,
         prediction: "",
-        tests: {
-          dry: { value: null, seen: "" },
-          moist: { value: null, seen: "" },
-          wet: { value: null, seen: "" },
-        },
+        graphHistory: [],
+        graphPaused: false,
+        viewerUsed: false,
       };
 
       const els = {
@@ -1211,8 +1529,17 @@
         overlayHelp: $("overlay-help"),
         reflectionSad: $("reflection-sad"),
         reflectionImprove: $("reflection-improve"),
-        testCaptureButtons: [...document.querySelectorAll("[data-test-capture]")],
-        testSeenSelects: [...document.querySelectorAll("[data-test-seen]")],
+        liveDecisionChart: $("live-decision-chart"),
+        viewerCurrentValue: $("viewer-current-value"),
+        viewerCurrentZone: $("viewer-current-zone"),
+        viewerDryThreshold: $("viewer-dry-threshold"),
+        viewerWetThreshold: $("viewer-wet-threshold"),
+        microbitDisplay: $("microbit-display"),
+        microbitFaceLabel: $("microbit-face-label"),
+        btnPauseGraph: $("btn-pause-graph"),
+        btnClearGraph: $("btn-clear-graph"),
+        faceStateItems: [...document.querySelectorAll("[data-face-state]")],
+        miniFaceGrids: [...document.querySelectorAll("[data-mini-face]")],
       };
 
       initialize();
@@ -1222,9 +1549,11 @@
         renderReadingSlots("dry");
         renderReadingSlots("wet");
         renderReadingSlots("moist");
+        renderMiniFaces();
         bindEvents();
         updateCompatibilityNotice();
         updateCalibration();
+        renderDecisionViewer();
         updateControls();
         showWorkflowStep(0, { scroll: false });
       }
@@ -1307,18 +1636,8 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
           });
         }
 
-        els.testCaptureButtons.forEach((button) => {
-          button.addEventListener("click", () => captureTest(button.dataset.testCapture));
-        });
-
-        els.testSeenSelects.forEach((select) => {
-          select.addEventListener("change", () => {
-            const kind = select.dataset.testSeen;
-            state.tests[kind].seen = select.value;
-            renderTestResult(kind);
-            updateWorkflowState();
-          });
-        });
+        els.btnPauseGraph.addEventListener("click", toggleGraphPause);
+        els.btnClearGraph.addEventListener("click", clearLiveGraph);
 
         [els.reflectionSad, els.reflectionImprove].forEach((input) => {
           input.addEventListener("input", updateWorkflowState);
@@ -1521,10 +1840,23 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         if (values.length < 2 || !Number.isFinite(values[1])) return;
 
         const raw = Math.max(0, Math.min(1023, Math.round(values[1])));
+        const deviceMs = Number.isFinite(values[0]) ? values[0] : Date.now();
+
         state.latestValue = raw;
         els.liveValue.textContent = raw;
 
+        if (thresholdsReady() && !state.graphPaused) {
+          state.graphHistory.push({ deviceMs, value: raw });
+          state.graphHistory = state.graphHistory.slice(-60);
+
+          if (state.graphHistory.length >= 3) {
+            state.viewerUsed = true;
+          }
+        }
+
+        renderDecisionViewer();
         updateControls();
+        updateWorkflowState();
       }
 
       function captureReading(kind) {
@@ -1550,6 +1882,8 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
           state.wetThreshold = null;
           state.moistReadings = [];
           state.moistAverage = null;
+          state.graphHistory = [];
+          state.viewerUsed = false;
           renderReadingSlots("moist");
         }
 
@@ -1588,6 +1922,7 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         calculateThresholds();
         renderZones();
         renderMoistCheck();
+        renderDecisionViewer();
 
         document.getElementById("substep-dry").classList.toggle("is-complete", Number.isFinite(state.dryAverage));
         document.getElementById("substep-wet").classList.toggle("is-complete", Number.isFinite(state.wetAverage));
@@ -1688,43 +2023,278 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         return "Halfdroog";
       }
 
-      function captureTest(kind) {
-        if (!Number.isFinite(state.latestValue) || !thresholdsReady()) return;
-        state.tests[kind].value = state.latestValue;
-        const output = document.querySelector(`[data-test-value="${kind}"]`);
-        output.textContent = state.latestValue;
-        renderTestResult(kind);
-        updateWorkflowState();
+      const FACE_PATTERNS = {
+        sad: [
+          "10001",
+          "00000",
+          "00100",
+          "01010",
+          "10001",
+        ],
+        neutral: [
+          "10001",
+          "00000",
+          "00000",
+          "01110",
+          "00000",
+        ],
+        happy: [
+          "10001",
+          "00000",
+          "00000",
+          "10001",
+          "01110",
+        ],
+      };
+
+      function renderMiniFaces() {
+        els.miniFaceGrids.forEach((grid) => {
+          const face = grid.dataset.miniFace;
+          renderLedGrid(grid, FACE_PATTERNS[face] || []);
+        });
+
+        renderMicrobitFace("unknown");
       }
 
-      function renderTestResult(kind) {
-        const test = state.tests[kind];
-        const output = document.querySelector(`[data-test-result="${kind}"]`);
+      function renderLedGrid(container, pattern) {
+        const values = pattern.join("").padEnd(25, "0").slice(0, 25);
+        container.innerHTML = values
+          .split("")
+          .map((value) => `<span class="${value === "1" ? "is-on" : ""}"></span>`)
+          .join("");
+      }
 
-        if (!Number.isFinite(test.value)) {
-          output.textContent = "--";
+      function toggleGraphPause() {
+        state.graphPaused = !state.graphPaused;
+        els.btnPauseGraph.textContent = state.graphPaused ? "Ga verder" : "Pauzeer grafiek";
+        renderDecisionViewer();
+      }
+
+      function clearLiveGraph() {
+        state.graphHistory = [];
+        renderDecisionViewer();
+      }
+
+      function renderDecisionViewer() {
+        const currentValue = state.graphPaused && state.graphHistory.length
+          ? state.graphHistory[state.graphHistory.length - 1].value
+          : state.latestValue;
+
+        els.viewerCurrentValue.textContent = Number.isFinite(currentValue)
+          ? String(Math.round(currentValue))
+          : "--";
+
+        els.viewerDryThreshold.textContent = formatOptional(state.dryThreshold);
+        els.viewerWetThreshold.textContent = formatOptional(state.wetThreshold);
+
+        const category = Number.isFinite(currentValue) && thresholdsReady()
+          ? categorize(currentValue)
+          : "Onbekend";
+
+        updateCurrentZone(category);
+        renderMicrobitFace(category);
+        renderLiveGraph(category);
+      }
+
+      function updateCurrentZone(category) {
+        els.viewerCurrentZone.classList.remove("is-dry", "is-semi", "is-wet");
+
+        if (!thresholdsReady()) {
+          els.viewerCurrentZone.textContent = "Meet eerst droog en nat";
           return;
         }
 
-        const category = categorize(test.value);
-        const expectedFromReading =
+        if (!Number.isFinite(state.latestValue) && !state.graphHistory.length) {
+          els.viewerCurrentZone.textContent = "Wacht op data";
+          return;
+        }
+
+        els.viewerCurrentZone.textContent = category;
+
+        if (category === "Droog") els.viewerCurrentZone.classList.add("is-dry");
+        if (category === "Halfdroog") els.viewerCurrentZone.classList.add("is-semi");
+        if (category === "Nat") els.viewerCurrentZone.classList.add("is-wet");
+      }
+
+      function renderMicrobitFace(category) {
+        const face =
           category === "Droog" ? "sad" :
           category === "Halfdroog" ? "neutral" :
-          "happy";
+          category === "Nat" ? "happy" :
+          "unknown";
 
-        if (!test.seen) {
-          output.textContent =
-            `Verwacht: ${
-              expectedFromReading === "sad"
-                ? "verdrietig"
-                : expectedFromReading === "neutral"
-                  ? "neutraal (-_-)"
-                  : "blij"
-            }`;
-          return;
+        renderLedGrid(
+          els.microbitDisplay,
+          face === "unknown" ? ["00000", "00000", "00000", "00000", "00000"] : FACE_PATTERNS[face]
+        );
+
+        const labels = {
+          sad: "Droog · verdrietig gezicht",
+          neutral: "Halfdroog · neutraal gezicht",
+          happy: "Nat · blij gezicht",
+          unknown: thresholdsReady() ? "Wacht op een meetwaarde." : "Meet eerst droge en natte aarde.",
+        };
+
+        els.microbitFaceLabel.textContent = labels[face];
+
+        els.faceStateItems.forEach((item) => {
+          item.classList.toggle("is-active", item.dataset.faceState === face);
+        });
+      }
+
+      function renderLiveGraph(currentCategory) {
+        const svg = els.liveDecisionChart;
+        if (!svg) return;
+
+        const width = 760;
+        const height = 320;
+        const margin = { top: 18, right: 18, bottom: 38, left: 54 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const yFor = (value) =>
+          margin.top + ((1023 - Math.max(0, Math.min(1023, value))) / 1023) * plotHeight;
+
+        const parts = [
+          "<title>Live grafiek van de bodemvochtsensor</title>",
+          "<desc>De grafiek toont recente sensorwaarden, de drie waterzones en de nieuwste meetwaarde.</desc>",
+          `<rect x="${margin.left}" y="${margin.top}" width="${plotWidth}" height="${plotHeight}" rx="8" fill="#ffffff"/>`,
+        ];
+
+        if (thresholdsReady()) {
+          const zones = getGraphZones();
+
+          zones.forEach((zone) => {
+            const yTop = yFor(zone.max);
+            const yBottom = yFor(zone.min);
+            const zoneHeight = Math.max(0, yBottom - yTop);
+
+            parts.push(
+              `<rect x="${margin.left}" y="${yTop.toFixed(2)}" width="${plotWidth}" height="${zoneHeight.toFixed(2)}" fill="${zone.fill}"/>`
+            );
+
+            if (zoneHeight >= 24) {
+              parts.push(
+                `<text x="${margin.left + 10}" y="${(yTop + 17).toFixed(2)}" fill="${zone.text}" font-size="12" font-weight="800">${zone.label}</text>`
+              );
+            }
+          });
+
+          [
+            { value: state.dryThreshold, label: "drooggrens" },
+            { value: state.wetThreshold, label: "natgrens" },
+          ].forEach((threshold) => {
+            const y = yFor(threshold.value);
+            parts.push(
+              `<line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${width - margin.right}" y2="${y.toFixed(2)}" stroke="#6f6380" stroke-width="1.2" stroke-dasharray="5 5"/>`,
+              `<text x="${width - margin.right - 6}" y="${Math.max(12, y - 5).toFixed(2)}" text-anchor="end" fill="#625b70" font-size="10" font-weight="700">${threshold.label} ${threshold.value}</text>`
+            );
+          });
+        } else {
+          parts.push(
+            `<text x="${margin.left + plotWidth / 2}" y="${margin.top + plotHeight / 2}" text-anchor="middle" fill="#625b70" font-size="15" font-weight="800">Meet eerst droge en natte aarde.</text>`
+          );
         }
 
-        output.textContent = test.seen === expectedFromReading ? "Klopt" : "Controleer opnieuw";
+        [0, 256, 512, 768, 1023].forEach((tick) => {
+          const y = yFor(tick);
+          parts.push(
+            `<line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${width - margin.right}" y2="${y.toFixed(2)}" stroke="#ded8e7" stroke-width="1"/>`,
+            `<text x="${margin.left - 9}" y="${(y + 4).toFixed(2)}" text-anchor="end" fill="#625b70" font-size="10">${tick}</text>`
+          );
+        });
+
+        parts.push(
+          `<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}" stroke="#8b8297" stroke-width="1.2"/>`,
+          `<line x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}" stroke="#8b8297" stroke-width="1.2"/>`,
+          `<text x="${width - margin.right}" y="${height - 12}" text-anchor="end" fill="#625b70" font-size="11" font-weight="700">tijd →</text>`,
+          `<text x="15" y="${margin.top + 8}" fill="#625b70" font-size="11" font-weight="700">sensor</text>`
+        );
+
+        const history = state.graphHistory;
+
+        if (history.length) {
+          const xForIndex = (index) => {
+            if (history.length === 1) return margin.left + plotWidth;
+            return margin.left + (index / (history.length - 1)) * plotWidth;
+          };
+
+          const pointString = history
+            .map((point, index) => `${xForIndex(index).toFixed(2)},${yFor(point.value).toFixed(2)}`)
+            .join(" ");
+
+          if (history.length > 1) {
+            parts.push(
+              `<polyline points="${pointString}" fill="none" stroke="#5200FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`
+            );
+          }
+
+          const lastIndex = history.length - 1;
+          const lastPoint = history[lastIndex];
+          const lastX = xForIndex(lastIndex);
+          const lastY = yFor(lastPoint.value);
+          const category = categorize(lastPoint.value);
+          const label = `${lastPoint.value} · ${category}`;
+          const boxWidth = 128;
+          const boxHeight = 28;
+          const boxX = Math.max(margin.left + 4, lastX - boxWidth - 10);
+          const boxY = Math.max(margin.top + 4, Math.min(height - margin.bottom - boxHeight - 4, lastY - 38));
+
+          parts.push(
+            `<circle cx="${lastX.toFixed(2)}" cy="${lastY.toFixed(2)}" r="5.5" fill="#5200FF" stroke="#ffffff" stroke-width="2"/>`,
+            `<rect x="${boxX.toFixed(2)}" y="${boxY.toFixed(2)}" width="${boxWidth}" height="${boxHeight}" rx="7" fill="#ffffff" stroke="#5200FF" stroke-width="1.5"/>`,
+            `<text x="${(boxX + boxWidth / 2).toFixed(2)}" y="${(boxY + 18).toFixed(2)}" text-anchor="middle" fill="#2a0068" font-size="11" font-weight="800">${label}</text>`
+          );
+
+          const secondsBack = Math.max(0, history.length - 1);
+          parts.push(
+            `<text x="${margin.left}" y="${height - 12}" fill="#625b70" font-size="10">-${secondsBack} s</text>`,
+            `<text x="${width - margin.right - 34}" y="${height - 12}" fill="#625b70" font-size="10">nu</text>`
+          );
+        }
+
+        if (state.graphPaused) {
+          parts.push(
+            `<rect x="${margin.left + 12}" y="${margin.top + 12}" width="92" height="26" rx="13" fill="#ffffff" stroke="#5200FF"/>`,
+            `<text x="${margin.left + 58}" y="${margin.top + 29}" text-anchor="middle" fill="#5200FF" font-size="11" font-weight="900">GEPAUZEERD</text>`
+          );
+        }
+
+        svg.innerHTML = parts.join("");
+      }
+
+      function getGraphZones() {
+        if (!thresholdsReady()) return [];
+
+        const dry = {
+          label: "Droog",
+          fill: "#fff0f1",
+          text: "#8d1531",
+        };
+        const semi = {
+          label: "Halfdroog",
+          fill: "#fff6dc",
+          text: "#6b4a00",
+        };
+        const wet = {
+          label: "Nat",
+          fill: "#e9fbff",
+          text: "#07586b",
+        };
+
+        if (state.direction === "lower_is_wetter") {
+          return [
+            { ...dry, min: state.dryThreshold, max: 1023 },
+            { ...semi, min: state.wetThreshold, max: state.dryThreshold },
+            { ...wet, min: 0, max: state.wetThreshold },
+          ];
+        }
+
+        return [
+          { ...wet, min: state.wetThreshold, max: 1023 },
+          { ...semi, min: state.dryThreshold, max: state.wetThreshold },
+          { ...dry, min: 0, max: state.dryThreshold },
+        ];
       }
 
       function updateControls() {
@@ -1735,10 +2305,6 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         els.btnCaptureMoist.disabled =
           !hasValue || !thresholdsReady() || state.moistReadings.length >= 3;
 
-        els.testCaptureButtons.forEach((button) => {
-          button.disabled = !hasValue || !thresholdsReady();
-        });
-
         document.getElementById("substep-connect").classList.toggle("is-complete", hasValue);
         document.getElementById("substep-logic").classList.toggle("is-complete", thresholdsReady());
       }
@@ -1747,10 +2313,6 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         const buildChecks = els.buildChecklist
           ? [...els.buildChecklist.querySelectorAll("input[type='checkbox']")]
           : [];
-
-        const testsComplete = Object.values(state.tests).every((test) =>
-          Number.isFinite(test.value) && Boolean(test.seen)
-        );
 
         const complete = {
           orient: Boolean(state.prediction),
@@ -1761,7 +2323,7 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
           execute:
             thresholdsReady() &&
             Number.isFinite(state.moistAverage) &&
-            testsComplete,
+            state.viewerUsed,
           reflect:
             Boolean(els.reflectionSad.value.trim() && els.reflectionImprove.value.trim()),
         };
@@ -1770,7 +2332,7 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
           link.classList.toggle("is-complete", Boolean(complete[link.dataset.stepLink]));
         });
 
-        document.getElementById("substep-test").classList.toggle("is-complete", testsComplete);
+        document.getElementById("substep-test").classList.toggle("is-complete", state.viewerUsed);
       }
 
       function showWorkflowStep(index, options = {}) {
