@@ -1542,6 +1542,30 @@
         miniFaceGrids: [...document.querySelectorAll("[data-mini-face]")],
       };
 
+      const FACE_PATTERNS = {
+        sad: [
+          "10001",
+          "00000",
+          "00100",
+          "01010",
+          "10001",
+        ],
+        neutral: [
+          "10001",
+          "00000",
+          "00000",
+          "01110",
+          "00000",
+        ],
+        happy: [
+          "10001",
+          "00000",
+          "00000",
+          "10001",
+          "01110",
+        ],
+      };
+
       initialize();
 
       function initialize() {
@@ -2023,29 +2047,6 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         return "Halfdroog";
       }
 
-      const FACE_PATTERNS = {
-        sad: [
-          "10001",
-          "00000",
-          "00100",
-          "01010",
-          "10001",
-        ],
-        neutral: [
-          "10001",
-          "00000",
-          "00000",
-          "01110",
-          "00000",
-        ],
-        happy: [
-          "10001",
-          "00000",
-          "00000",
-          "10001",
-          "01110",
-        ],
-      };
 
       function renderMiniFaces() {
         els.miniFaceGrids.forEach((grid) => {
@@ -2060,7 +2061,7 @@ els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hi
         const values = pattern.join("").padEnd(25, "0").slice(0, 25);
         container.innerHTML = values
           .split("")
-          .map((value) => `<span class="${value === "1" ? "is-on" : ""}"></span>`)
+          .map((value) => `<span class="microbit-led ${value === "1" ? "is-on" : ""}"></span>`)
           .join("");
       }
 
