@@ -974,20 +974,7 @@
                 Gebruik dit schema als visuele hulp terwijl je de blokken in MakeCode opbouwt.
               </figcaption>
             </figure>
-            <ol class="makecode-steps">
-              <li>Lees de analoge waarde van <strong>P0</strong> en bewaar die in de variabele <strong>water</strong>.</li>
-              <li>Gebruik een <strong>als ... anders ...</strong>-blok.</li>
-              <li id="makecode-condition">Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.</li>
-              <li>Toon een <strong>verdrietig gezicht</strong> als de aarde droog is.</li>
-              <li>Toon een <strong>neutraal -_- gezicht</strong> als de aarde halfdroog is.</li>
-              <li>Toon een <strong>blij gezicht</strong> als de aarde nat is.</li>
-            </ol>
-
-            <p><strong>JavaScript-weergave in MakeCode:</strong></p>
-            <pre id="generated-code" class="code-preview">Meet eerst droge en natte aarde.</pre>
-
             <div class="capture-actions">
-              <button id="btn-copy-code" class="secondary-button" type="button" disabled>Kopieer code</button>
               <a
                 class="primary-button header-link"
                 href="https://makecode.microbit.org/"
@@ -1228,9 +1215,6 @@
         zoneWetRange: $("zone-wet-range"),
         directionNote: $("direction-note"),
         moistCheck: $("moist-check"),
-        makecodeCondition: $("makecode-condition"),
-        generatedCode: $("generated-code"),
-        btnCopyCode: $("btn-copy-code"),
         btnHelp: $("btn-help"),
         btnCloseHelp: $("btn-close-help"),
         overlayHelp: $("overlay-help"),
@@ -1315,12 +1299,7 @@
         els.btnResetDry.addEventListener("click", () => resetReadings("dry"));
         els.btnResetWet.addEventListener("click", () => resetReadings("wet"));
         els.btnResetMoist.addEventListener("click", () => resetReadings("moist"));
-
-        if (els.btnCopyCode) {
-          els.btnCopyCode.addEventListener("click", copyGeneratedCode);
-        }
-
-        els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hidden"));
+els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hidden"));
         els.btnCloseHelp.addEventListener("click", () => els.overlayHelp.classList.add("hidden"));
 
         els.overlayHelp.addEventListener("click", (event) => {
@@ -1618,7 +1597,6 @@
         calculateThresholds();
         renderZones();
         renderMoistCheck();
-        renderGeneratedCode();
 
         document.getElementById("substep-dry").classList.toggle("is-complete", Number.isFinite(state.dryAverage));
         document.getElementById("substep-wet").classList.toggle("is-complete", Number.isFinite(state.wetAverage));
@@ -1717,69 +1695,6 @@
         if (value < state.dryThreshold) return "Droog";
         if (value >= state.wetThreshold) return "Nat";
         return "Halfdroog";
-      }
-
-      function renderGeneratedCode() {
-        if (!els.makecodeCondition || !els.generatedCode || !els.btnCopyCode) return;
-
-        if (!thresholdsReady()) {
-          els.makecodeCondition.textContent =
-            "Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.";
-          els.generatedCode.textContent = "Meet eerst droge en natte aarde.";
-          els.btnCopyCode.disabled = true;
-          return;
-        }
-
-        const operator = state.direction === "lower_is_wetter" ? ">" : "<";
-        const wetOperator = state.direction === "lower_is_wetter" ? "<=" : ">=";
-
-        els.makecodeCondition.innerHTML =
-          `Gebruik twee grenzen: <strong>droog bij water ${operator} ${state.dryThreshold}</strong> en ` +
-          `<strong>nat bij water ${wetOperator} ${state.wetThreshold}</strong>. Daartussen is de aarde halfdroog.`;
-
-        els.generatedCode.textContent =
-`serial.redirectToUSB()
-serial.setBaudRate(BaudRate.BaudRate115200)
-
-basic.forever(function () {
-    let water = pins.analogReadPin(AnalogPin.P0)
-
-    serial.writeLine("" + input.runningTime() + "," + water)
-
-    if (water ${operator} ${state.dryThreshold}) {
-        basic.showIcon(IconNames.Sad)
-    } else if (water ${wetOperator} ${state.wetThreshold}) {
-        basic.showIcon(IconNames.Happy)
-    } else {
-        basic.showLeds(\`
-# # . # #
-. . . . .
-. . . . .
-. # # # .
-. . . . .
-\`)
-    }
-
-    basic.pause(1000)
-})`;
-
-        els.btnCopyCode.disabled = false;
-      }
-
-      async function copyGeneratedCode() {
-        if (!thresholdsReady() || !els.generatedCode || !els.btnCopyCode) return;
-
-        try {
-          await navigator.clipboard.writeText(els.generatedCode.textContent);
-          const original = els.btnCopyCode.textContent;
-          els.btnCopyCode.textContent = "Gekopieerd";
-          window.setTimeout(() => {
-            els.btnCopyCode.textContent = original;
-          }, 1500);
-        } catch (error) {
-          console.error(error);
-          els.btnCopyCode.textContent = "Kopiëren lukte niet";
-        }
       }
 
       function captureTest(kind) {
