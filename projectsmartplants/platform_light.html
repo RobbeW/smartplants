@@ -974,6 +974,20 @@
                 Gebruik dit schema als visuele hulp terwijl je de blokken in MakeCode opbouwt.
               </figcaption>
             </figure>
+            <ol class="makecode-steps">
+              <li>Lees de analoge waarde van <strong>P0</strong> en bewaar die in de variabele <strong>water</strong>.</li>
+              <li>Gebruik een <strong>als ... anders ...</strong>-blok.</li>
+              <li id="makecode-condition">Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.</li>
+              <li>Toon een <strong>verdrietig gezicht</strong> als de aarde droog is.</li>
+              <li>Toon een <strong>neutraal -_- gezicht</strong> als de aarde halfdroog is.</li>
+              <li>Toon een <strong>blij gezicht</strong> als de aarde nat is.</li>
+            </ol>
+
+            <p><strong>JavaScript-weergave in MakeCode:</strong></p>
+            <pre id="generated-code" class="code-preview">Meet eerst droge en natte aarde.</pre>
+
+            <div class="capture-actions">
+              <button id="btn-copy-code" class="secondary-button" type="button" disabled>Kopieer code</button>
               <a
                 class="primary-button header-link"
                 href="https://makecode.microbit.org/"
@@ -1154,7 +1168,9 @@
         currentStepIndex: 0,
         port: null,
         reader: null,
+        readLoopPromise: null,
         serialLoopActive: false,
+        isConnecting: false,
         latestValue: null,
         latestLine: "",
         dryReadings: [],
@@ -1212,9 +1228,6 @@
         zoneWetRange: $("zone-wet-range"),
         directionNote: $("direction-note"),
         moistCheck: $("moist-check"),
-        logicInput: $("logic-input"),
-        logicProcessing: $("logic-processing"),
-        logicOutput: $("logic-output"),
         makecodeCondition: $("makecode-condition"),
         generatedCode: $("generated-code"),
         btnCopyCode: $("btn-copy-code"),
@@ -1303,7 +1316,9 @@
         els.btnResetWet.addEventListener("click", () => resetReadings("wet"));
         els.btnResetMoist.addEventListener("click", () => resetReadings("moist"));
 
-        els.btnCopyCode.addEventListener("click", copyGeneratedCode);
+        if (els.btnCopyCode) {
+          els.btnCopyCode.addEventListener("click", copyGeneratedCode);
+        }
 
         els.btnHelp.addEventListener("click", () => els.overlayHelp.classList.remove("hidden"));
         els.btnCloseHelp.addEventListener("click", () => els.overlayHelp.classList.add("hidden"));
@@ -1363,85 +1378,139 @@
           return;
         }
 
-        try {
-          if (state.reader) {
-            await disconnectSerial();
-            return;
-          }
+        if (state.isConnecting) return;
 
-          state.port = await navigator.serial.requestPort();
-          await state.port.open({ baudRate: 115200 });
+        if (state.port) {
+          await disconnectSerial();
+          return;
+        }
+
+        state.isConnecting = true;
+        els.btnConnect.disabled = true;
+
+        try {
+          const port = await navigator.serial.requestPort();
+          state.port = port;
+
+          // Een eerder geopende poort kan nog actief zijn na een onverwachte fout.
+          // In dat geval gebruiken we de bestaande open verbinding opnieuw.
+          if (!port.readable && !port.writable) {
+            await port.open({ baudRate: 115200 });
+          }
 
           state.serialLoopActive = true;
           setSerialStatus("micro:bit verbonden", "ok");
           els.connectionStatus.textContent = "micro:bit verbonden";
           els.btnConnect.textContent = "Verbreek verbinding";
 
-          readSerialLoop();
+          const loopPromise = readSerialLoop(port);
+          state.readLoopPromise = loopPromise;
+          loopPromise.finally(() => {
+            if (state.readLoopPromise === loopPromise) {
+              state.readLoopPromise = null;
+            }
+          });
         } catch (error) {
           console.error(error);
+          state.serialLoopActive = false;
+
+          if (state.port) {
+            try {
+              if (state.port.readable || state.port.writable) {
+                await state.port.close();
+              }
+            } catch (closeError) {
+              console.warn("Kon de seriële poort niet sluiten na een verbindingsfout:", closeError);
+            }
+          }
+
+          state.port = null;
+          state.reader = null;
           setSerialStatus("Verbinden lukte niet.", "error");
           els.connectionStatus.textContent = "Niet verbonden";
+          els.btnConnect.textContent = "Verbind micro:bit";
+        } finally {
+          state.isConnecting = false;
+          els.btnConnect.disabled = false;
+          updateControls();
         }
-
-        updateControls();
       }
 
       async function disconnectSerial() {
+        const port = state.port;
+        const loopPromise = state.readLoopPromise;
+
         state.serialLoopActive = false;
+        els.btnConnect.disabled = true;
 
         if (state.reader) {
           try {
             await state.reader.cancel();
           } catch (error) {
-            console.warn(error);
+            console.warn("Kon de seriële reader niet annuleren:", error);
           }
         }
 
-        if (state.port) {
+        if (loopPromise) {
           try {
-            await state.port.close();
+            await loopPromise;
           } catch (error) {
-            console.warn(error);
+            console.warn("De seriële leeslus stopte met een fout:", error);
+          }
+        }
+
+        if (port) {
+          try {
+            if (port.readable || port.writable) {
+              await port.close();
+            }
+          } catch (error) {
+            console.warn("Kon de seriële poort niet sluiten:", error);
           }
         }
 
         state.reader = null;
+        state.readLoopPromise = null;
         state.port = null;
         setSerialStatus("Niet verbonden");
         els.connectionStatus.textContent = "Niet verbonden";
         els.btnConnect.textContent = "Verbind micro:bit";
+        els.btnConnect.disabled = false;
         updateControls();
       }
 
-      async function readSerialLoop() {
-        if (!state.port?.readable) return;
+      async function readSerialLoop(port) {
+        if (!port?.readable) return;
 
         const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = state.port.readable.pipeTo(textDecoder.writable);
-        state.reader = textDecoder.readable
+        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+        const reader = textDecoder.readable
           .pipeThrough(new TransformStream(new LineBreakTransformer()))
           .getReader();
 
+        state.reader = reader;
+
         try {
-          while (state.serialLoopActive) {
-            const { value, done } = await state.reader.read();
+          while (state.serialLoopActive && state.port === port) {
+            const { value, done } = await reader.read();
             if (done) break;
             if (typeof value === "string") parseSerialLine(value);
           }
         } catch (error) {
-          if (state.serialLoopActive) {
+          if (state.serialLoopActive && state.port === port) {
             console.error(error);
             setSerialStatus("De verbinding werd onderbroken.", "error");
           }
         } finally {
           try {
-            state.reader?.releaseLock();
+            reader.releaseLock();
           } catch (error) {
             console.warn(error);
           }
 
-          state.reader = null;
+          if (state.reader === reader) {
+            state.reader = null;
+          }
 
           try {
             await readableStreamClosed.catch(() => {});
@@ -1449,11 +1518,23 @@
             console.warn(error);
           }
 
-          if (state.serialLoopActive) {
+          // Alleen bij een onverwachte stop ruimt de leeslus zelf de poort op.
+          // Bij een normale disconnect doet disconnectSerial() dit na het annuleren.
+          if (state.serialLoopActive && state.port === port) {
             state.serialLoopActive = false;
+
+            try {
+              if (port.readable || port.writable) {
+                await port.close();
+              }
+            } catch (error) {
+              console.warn("Kon de seriële poort niet sluiten na een leesfout:", error);
+            }
+
             state.port = null;
             els.connectionStatus.textContent = "Niet verbonden";
             els.btnConnect.textContent = "Verbind micro:bit";
+            setSerialStatus("Verbinding verbroken", "error");
             updateControls();
           }
         }
@@ -1473,7 +1554,6 @@
         state.latestValue = raw;
         els.liveValue.textContent = raw;
 
-        updateLogicDemo();
         updateControls();
       }
 
@@ -1539,7 +1619,6 @@
         renderZones();
         renderMoistCheck();
         renderGeneratedCode();
-        updateLogicDemo();
 
         document.getElementById("substep-dry").classList.toggle("is-complete", Number.isFinite(state.dryAverage));
         document.getElementById("substep-wet").classList.toggle("is-complete", Number.isFinite(state.wetAverage));
@@ -1640,29 +1719,9 @@
         return "Halfdroog";
       }
 
-      function updateLogicDemo() {
-        const value = state.latestValue;
-        els.logicInput.textContent = Number.isFinite(value) ? value : "--";
-
-        if (!Number.isFinite(value) || !thresholdsReady()) {
-          els.logicProcessing.textContent = "Meet eerst droog en nat";
-          els.logicOutput.textContent = "--";
-          return;
-        }
-
-        const category = categorize(value);
-        els.logicProcessing.textContent = `Zone: ${category}`;
-
-        if (category === "Droog") {
-          els.logicOutput.textContent = "Verdrietig";
-        } else if (category === "Halfdroog") {
-          els.logicOutput.textContent = "Neutraal (-_-)";
-        } else {
-          els.logicOutput.textContent = "Blij";
-        }
-      }
-
       function renderGeneratedCode() {
+        if (!els.makecodeCondition || !els.generatedCode || !els.btnCopyCode) return;
+
         if (!thresholdsReady()) {
           els.makecodeCondition.textContent =
             "Meet eerst droge en natte aarde. Daarna verschijnt hier jouw grens.";
@@ -1708,7 +1767,7 @@ basic.forever(function () {
       }
 
       async function copyGeneratedCode() {
-        if (!thresholdsReady()) return;
+        if (!thresholdsReady() || !els.generatedCode || !els.btnCopyCode) return;
 
         try {
           await navigator.clipboard.writeText(els.generatedCode.textContent);
