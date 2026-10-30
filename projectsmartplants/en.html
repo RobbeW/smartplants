@@ -1,0 +1,662 @@
+﻿<!doctype html>
+<!--
+  Project Smart Plants
+  Copyright (c) 2026 Robbe Wulgaert
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Robbe Wulgaert, AI in de Klas, robbewulgaert.be" />
+  <meta name="copyright" content="Copyright (c) 2026 Robbe Wulgaert" />
+  <!-- generated:favicon -->
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png?v=ff7968036640">
+  <link rel="shortcut icon" type="image/png" sizes="64x64" href="./favicon.png?v=ff7968036640">
+  <!-- /generated:favicon -->
+  <link rel="stylesheet" href="style.css" />
+  <style id="language-toggle-styles">
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(82, 0, 255, 0.22);
+  border-radius: 999px;
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 10px 24px rgba(82, 0, 255, 0.08);
+}
+.language-toggle a {
+  min-width: 44px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--muted, var(--delphi-muted, #625b70));
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.language-toggle a.is-active {
+  background: var(--brand, var(--brand-purple, var(--delphi-blue, #5200FF)));
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(82, 0, 255, 0.20);
+}
+.language-toggle a:focus-visible {
+  outline: 3px solid rgba(61, 255, 208, 0.75);
+  outline-offset: 2px;
+}
+</style>
+<!-- generated:seo-head -->
+<title>Smart Plants Project</title>
+<meta name="description" content="The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://robbew.github.io/smartplants/en.html">
+<link rel="alternate" hreflang="nl-BE" href="https://robbew.github.io/smartplants/">
+<link rel="alternate" hreflang="en" href="https://robbew.github.io/smartplants/en.html">
+<link rel="alternate" hreflang="x-default" href="https://robbew.github.io/smartplants/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Smart Plants Project">
+<meta property="og:description" content="The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.">
+<meta property="og:url" content="https://robbew.github.io/smartplants/en.html">
+<meta property="og:image" content="https://robbew.github.io/smartplants/media/smartplants_hero.jpg">
+<meta property="og:image:alt" content="Smart Plants Project — learning project">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart Plants Project">
+<meta name="twitter:description" content="The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.">
+<meta name="twitter:image" content="https://robbew.github.io/smartplants/media/smartplants_hero.jpg">
+<meta name="twitter:image:alt" content="Smart Plants Project — learning project">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://robbew.github.io/smartplants/en.html#webpage","url":"https://robbew.github.io/smartplants/en.html","name":"Smart Plants Project","description":"The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.","inLanguage":"en","about":{"@id":"https://robbew.github.io/smartplants/#resource"},"mainEntity":{"@id":"https://robbew.github.io/smartplants/#resource"}},{"@type":"Person","@id":"https://robbew.github.io/aiindeklas/#robbe-wulgaert","name":"Robbe Wulgaert","url":"https://robbew.github.io/aiindeklas/"},{"@type":["CreativeWork","LearningResource"],"@id":"https://robbew.github.io/smartplants/#resource","name":"Smart Plants Project","description":"The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.","url":"https://robbew.github.io/smartplants/","creator":{"@id":"https://robbew.github.io/aiindeklas/#robbe-wulgaert"},"license":"https://robbew.github.io/smartplants/LICENSE.md","inLanguage":"en","teaches":["Calibrating sensors","Recognising input, processing and output"],"abstract":"Setup: Arduino and capacitive soil moisture sensor; Calibration: Compare dry, moist and wet soil; Export: Measurements as CSV or report as PDF"}]}</script>
+<!-- /generated:seo-head -->
+<style id="seo-facts-styles">.seo-facts dl { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; } .seo-facts dl > div { min-width: 10rem; } .seo-facts dt { font-weight: 700; } .seo-facts dd { margin: 0; } .language-toggle a { text-decoration: none; }</style>
+</head>
+<body class="landing-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation">
+        <span class="menu-button-icon" aria-hidden="true"></span>
+      </button>
+      <a class="brand-link" href="#top" aria-label="Project Smart Plants">
+        <span class="brand-copy">
+          <span class="brand-title">Project Smart Plants</span>
+          <span class="brand-subtitle">AI in de Klas - Robbe Wulgaert</span>
+        </span>
+      </a>
+
+      <div class="nav-panel" id="navLinks">
+        <div class="nav-links">
+          <a href="#werking">Assignment</a>
+          <a href="#leerlijn">Learning path</a>
+          <a href="#leerkrachten">Teachers</a>
+        </div>
+        <div class="nav-actions">
+          <div class="language-toggle" role="group" aria-label="Language selection">
+            <a href="./" data-language-choice="nl">NL</a>
+            <a href="en.html" data-language-choice="en" class="is-active" aria-current="page">ENG</a>
+          </div>
+          <a class="btn btn-secondary" href="evaluatie.html">Evaluation</a>
+          <a class="btn btn-primary" href="platform.html">Start platform</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="landing-hero" id="top" aria-label="Project Smart Plants">
+      <div class="hero-content">
+        <p class="section-kicker">Project Smart Plants</p>
+        <h1>Build a smart plant meter.</h1>
+        <p class="hero-lead">The Smart Plants Project has students measure soil moisture and calibrate a sensor to build a plant monitor.</p>
+        <div class="hero-actions" aria-label="Key actions">
+          <a class="btn btn-primary" href="platform.html">Start platform</a>
+          <a class="btn btn-secondary" href="#werking">View the assignment</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section landing-intro" id="werking">
+      <p class="section-kicker">How does it work?</p>
+      <h2 class="section-title">Build, collect data and make your first report</h2>
+      <p class="section-lead">
+        Students first predict what will happen. Then they build the setup, calibrate their sensor and collect measurements in the browser.
+      </p>
+
+      <div class="steps">
+        <article class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="card-title">Predict</h3>
+          <p class="card-copy">
+            Students write down what they expect with dry, moist and wet soil.
+          </p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="card-title">Calibrate</h3>
+          <p class="card-copy">
+            The class measures what dry, moist and wet mean for this sensor.
+          </p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="card-title">Measure</h3>
+          <p class="card-copy">
+            The browser shows live how the sensor value changes during the measurement.
+          </p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">4</div>
+          <h3 class="card-title">Design</h3>
+          <p class="card-copy">
+            Choose when the plant needs water and let an output react.
+          </p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">5</div>
+          <h3 class="card-title">Report</h3>
+          <p class="card-copy">
+            Download the measurement data or create a PDF with graph, conclusion and reflection.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section media-section" aria-label="Setup">
+      <div class="split">
+        <article class="audience-card">
+          <p class="section-kicker">The setup</p>
+          <h2 class="section-title">Get started with sensors</h2>
+          <p class="section-lead">
+            The capacitive sensor measures how the electrical capacitance around it changes. More water in the potting soil changes that value. The Arduino reads the raw value.
+          </p>
+          <ul class="bullet-list">
+            <li>Capacitive soil-moisture sensor, for example AZ-Delivery V1.2.</li>
+            <li>Arduino Uno with USB data cable.</li>
+            <li>School laptop with Chrome or Edge.</li>
+            <li>Plant in potting soil and water for the measurement.</li>
+          </ul>
+        </article>
+
+        <figure class="setup-photo-frame">
+          <img src="media/smartplants_microbit_reference.jpg" alt="Smart Plants setup with plant, microcontroller and measuring wires" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="section photo-section" id="beelden">
+      <p class="section-kicker">In pictures</p>
+      <h2 class="section-title">All the information at a glance</h2>
+      <p class="section-lead">
+        Students work with real plants, sensors and their microcontroller. They immediately see the measurements and changes on their laptop screen.
+      </p>
+      <div class="media-gallery">
+        <figure class="photo-card">
+          <img src="media/landing_page.jpg" alt="Student with Smart Plants booklet, laptop and microcontroller" />
+        </figure>
+        <figure class="photo-card">
+          <img src="media/product_1.jpg" alt="Plant with micro:bit and measuring wires as a safe IPO reference" />
+        </figure>
+        <figure class="photo-card">
+          <img src="media/product_3.jpg" alt="Soil moisture sensor contacts in potting soil with measuring wires" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="leren">
+      <p class="section-kicker">What will you learn?</p>
+      <h2 class="section-title">What do students practise?</h2>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">01</div>
+          <h3 class="card-title">Measuring with sensors</h3>
+          <p class="card-copy">
+            A sensor gives a number. By measuring dry and wet potting soil, students learn what that number means in their own experiment.
+          </p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">02</div>
+          <h3 class="card-title">Calibrating</h3>
+          <p class="card-copy">
+            They compare dry, lightly moist and wet soil before choosing a threshold.
+          </p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">03</div>
+          <h3 class="card-title">IPO thinking</h3>
+          <p class="card-copy">
+            They recognize input, processing and output in their own circuit.
+          </p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">04</div>
+          <h3 class="card-title">Investigating</h3>
+          <p class="card-copy">
+            They compare measurement series and write a conclusion with their own data.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section curriculum-section" id="leerlijn">
+      <!-- generated:seo-facts -->
+<section class="seo-facts" aria-label="Project facts"><dl><div><dt>Setup</dt><dd>Arduino and capacitive soil moisture sensor</dd></div><div><dt>Calibration</dt><dd>Compare dry, moist and wet soil</dd></div><div><dt>Export</dt><dd>Measurements as CSV or report as PDF</dd></div></dl></section>
+<!-- /generated:seo-facts -->
+      <!-- generated:heading -->
+      <p class="section-kicker">Place in the learning path</p>
+      <h2 class="section-title">From platforms to projects.</h2>
+      <p class="section-lead">The platforms build computational thinking. The projects use that thinking in a cross-curricular assignment in which students build, measure, test and conclude.</p>
+      <!-- /generated:heading -->
+
+      <!-- generated:tree -->
+      <div class="family-tree" aria-label="Learning path of platforms and projects">
+        <div class="tree-root">
+          <a class="tree-node root" href="https://www.aiindeklas.be" target="_blank" rel="noopener">
+            <strong>Learning computational thinking</strong>
+            <span>from blocks to code, from code to research</span>
+          </a>
+        </div>
+        <div class="tree-branches">
+          <div class="tree-branch">
+            <div class="branch-title">Platforms</div>
+            <div class="tree-stack">
+              <a class="tree-node" href="https://robbew.github.io/Blockly/" target="_blank" rel="noopener">
+                <strong>Blockly</strong>
+                <span>visual step-by-step thinking.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/jsindeklas/" target="_blank" rel="noopener">
+                <strong>JavaScript</strong>
+                <span>logic in real code.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/htmlindeklas/" target="_blank" rel="noopener">
+                <strong>HTML</strong>
+                <span>structuring webpages.</span>
+              </a>
+              <div class="delphi-dodona-pair" aria-label="Dodona and Delphi">
+                <a class="tree-node dodona" href="https://dodona.be/nl/courses/2641/" target="_blank" rel="noopener">
+                  <strong>Dodona</strong>
+                  <span>Python in the Classroom with tracking.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/delphi/" target="_blank" rel="noopener">
+                  <strong>Delphi</strong>
+                  <span>Practice Python in the browser.</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="tree-branch">
+            <div class="branch-title">STEaM projects</div>
+            <div class="tree-stack">
+              <a class="tree-node current" href="https://robbew.github.io/smartplants/" target="_blank" rel="noopener" aria-current="page">
+                <strong>Smart Plants</strong>
+                <span>Arduino, soil moisture, calibration and data.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/robothand/" target="_blank" rel="noopener">
+                <strong>Robotic hand</strong>
+                <span>Arduino, sensors, servos and movement.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/projectwind/" target="_blank" rel="noopener">
+                <strong>Wind</strong>
+                <span>Micro:bit, energy, voltage and current.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/slimme_vuilnisbak/" target="_blank" rel="noopener">
+                <strong>Smart bin</strong>
+                <span>AI, image recognition, data and microcontrollers.</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/aiindeklas/zelflerende-games/" target="_blank" rel="noopener">
+                <strong>Self-learning games</strong>
+                <span>Getting started with machine learning</span>
+              </a>
+              <a class="tree-node" href="https://robbew.github.io/projectfijnstof/" target="_blank" rel="noopener">
+                <strong>Particulate matter</strong>
+                <span>Arduino, air quality, data and poster session.</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /generated:tree -->
+    </section>
+
+    <section class="section" id="leerkrachten">
+      <article class="audience-card">
+        <p class="section-kicker">For teachers</p>
+        <h2 class="section-title">Ready to use in class.</h2>
+        <p class="section-lead">
+          The assignment is made for students around 13-14 years old. Start with demo mode, then connect the hardware and let students finish with a CSV file or PDF report.
+        </p>
+        <ul class="bullet-list">
+          <li>Suitable for short research moments in Computer Science or STEM.</li>
+          <li>Usable with Arduino, micro:bit code or demo mode only.</li>
+          <li>PDF export bundles hypothesis, calibration, measurement series, graph, conclusion and reflection.</li>
+          <li>No backend needed: the folder can run as a static site on GitHub Pages.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section" id="privacy-license">
+      <h2 class="section-title">Privacy and licence</h2>
+      <div class="privacy-license-list">
+        <details class="feature-card privacy-license-details">
+          <summary>Privacy</summary>
+          <div class="privacy-license-content">
+            <p class="card-copy">This project does not use its own analytics or advertising cookies. Input, progress and measurement data are processed in the browser and may be stored locally on the device. A download or export occurs only when the user initiates it. Connected hardware is accessed only after permission is given in the browser. GitHub Pages logs visitors’ IP addresses for security purposes; external services are governed by their provider’s privacy policy.</p>
+            <p class="card-copy"><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection">Read how GitHub Pages processes technical visitor data.</a></p>
+          </div>
+        </details>
+        <details class="feature-card privacy-license-details">
+          <summary>License</summary>
+          <div class="privacy-license-content">
+            <p class="card-copy">Original project material by Robbe Wulgaert may be used, copied and adapted free of charge for education, provided that ‘Robbe Wulgaert – AI in de Klas’ is clearly displayed, where reasonably practical with a link to the original project. Commercial sale, paid distribution, sublicensing or repackaging as a commercial product is not permitted without prior written permission. Other uses outside education also require prior written permission. Third-party components remain subject to their own licences.</p>
+            <p class="card-copy"><a href="LICENSE.md">Read the full licence terms.</a></p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Get started">
+      <div class="cta-band">
+        <div>
+          <h2>Open the research platform.</h2>
+          <p>
+            Start demo mode, connect Arduino or let students compare and report their measurement series.
+          </p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="platform.html">Start platform</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-title">Project Smart Plants</div>
+        <p>
+          Author: Robbe Wulgaert - AI in de Klas - robbewulgaert.be<br />
+          © 2026 Robbe Wulgaert. Educational use with attribution; no commercial distribution.
+        </p>
+      </div>
+
+      <div class="footer-links" aria-label="Footer links">
+        <a href="#privacy-license">Privacy and licence</a>
+        <a href="https://www.robbewulgaert.be">robbewulgaert.be</a>
+        <a href="https://www.aiindeklas.be">AI in de Klas</a>
+        <a href="platform.html">Research platform</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuButton = document.getElementById("menuButton");
+    const navLinks = document.getElementById("navLinks");
+
+    const getMenuLabel = (isOpen) => {
+      const isEnglish = document.documentElement.lang === "en";
+      if (isEnglish) return isOpen ? "Close navigation" : "Open navigation";
+      return isOpen ? "Navigatie sluiten" : "Navigatie openen";
+    };
+
+    const setMenuState = (isOpen) => {
+      navLinks.classList.toggle("is-open", isOpen);
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute("aria-label", getMenuLabel(isOpen));
+    };
+
+    menuButton?.addEventListener("click", () => {
+      setMenuState(!navLinks.classList.contains("is-open"));
+    });
+
+    navLinks?.addEventListener("click", (event) => {
+      if (event.target instanceof HTMLAnchorElement) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (navLinks?.classList.contains("is-open") && !navLinks.contains(event.target) && !menuButton?.contains(event.target)) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && navLinks.classList.contains("is-open")) {
+        setMenuState(false);
+        menuButton.focus();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 761px)").matches) setMenuState(false);
+    });
+
+    document.addEventListener("smartplants:languagechange", () => {
+      menuButton.setAttribute("aria-label", getMenuLabel(navLinks.classList.contains("is-open")));
+    });
+  </script>
+<script id="language-toggle-script">
+(() => {
+  const LANGUAGE_KEY = "aiindeklas:index-language";
+  const TRANSLATIONS = {
+  "Belangrijke acties": "Key actions",
+  "Hoe werkt het?": "How does it work?",
+  "Start": "Get started",
+  "Footerlinks": "Footer links",
+  "Navigatie openen": "Open navigation",
+  "Projectopstelling": "Project setup",
+  "PDF-export": "PDF export",
+  "Formularium": "Reference sheet",
+  "Smart Plants opstelling met plant, microcontroller en meetdraden": "Smart Plants setup with plant, microcontroller and measuring wires",
+  "Leerling met Smart Plants bundel, laptop en microcontroller": "Student with Smart Plants booklet, laptop and microcontroller",
+  "Plant met micro:bit en meetdraden als veilige IPO-referentie": "Plant with micro:bit and measuring wires as a safe IPO reference",
+  "Bodemvochtsensorcontacten in potgrond met meetdraden": "Soil moisture sensor contacts in potting soil with measuring wires",
+  // generated:translations
+  "Plaats in de leerlijn": "Place in the learning path",
+  "Van platformen naar projecten.": "From platforms to projects.",
+  "De platformen bouwen het computationeel denken op. De projecten gebruiken dat denken in een vakoverschrijdende opdracht waarin leerlingen bouwen, meten, testen en besluiten.": "The platforms build computational thinking. The projects use that thinking in a cross-curricular assignment in which students build, measure, test and conclude.",
+  "Leerlijn van platformen en projecten": "Learning path of platforms and projects",
+  "Leren computationeel denken": "Learning computational thinking",
+  "van blokken naar code, van code naar onderzoek": "from blocks to code, from code to research",
+  "Blockly": "Blockly",
+  "visueel denken in stappen.": "visual step-by-step thinking.",
+  "JavaScript": "JavaScript",
+  "logica in echte code.": "logic in real code.",
+  "HTML": "HTML",
+  "webpagina's structureren.": "structuring webpages.",
+  "Dodona": "Dodona",
+  "Python in de Klas met opvolging.": "Python in the Classroom with tracking.",
+  "Delphi": "Delphi",
+  "Python oefenen in de browser.": "Practice Python in the browser.",
+  "Smart Plants": "Smart Plants",
+  "Arduino, bodemvochtigheid, kalibratie en data.": "Arduino, soil moisture, calibration and data.",
+  "Robothand": "Robotic hand",
+  "Arduino, sensoren, servo's en beweging.": "Arduino, sensors, servos and movement.",
+  "Wind": "Wind",
+  "Micro:bit, energie, spanning en stroom.": "Micro:bit, energy, voltage and current.",
+  "Slimme vuilnisbak": "Smart bin",
+  "AI, beeldherkenning, data en microcontrollers.": "AI, image recognition, data and microcontrollers.",
+  "Zelflerende games": "Self-learning games",
+  "Aan de slag met machine learning": "Getting started with machine learning",
+  "Fijnstof": "Particulate matter",
+  "Arduino, luchtkwaliteit, data en postersessie.": "Arduino, air quality, data and poster session.",
+  "Platformen": "Platforms",
+  "STEaM-projecten": "STEaM projects",
+  "Dodona en Delphi": "Dodona and Delphi",
+  // /generated:translations
+  "Privacy en licentie": "Privacy and licence",
+  "Dit project gebruikt geen eigen analytics of advertentiecookies. Invoer, voortgang en meetgegevens worden in de browser verwerkt en kunnen lokaal op het toestel worden bewaard. Een download of export gebeurt alleen wanneer de gebruiker die zelf start. Toegang tot aangesloten hardware gebeurt alleen na toestemming in de browser. GitHub Pages registreert het IP-adres van bezoekers voor beveiligingsdoeleinden; externe diensten vallen onder het privacybeleid van hun aanbieder.": "This project does not use its own analytics or advertising cookies. Input, progress and measurement data are processed in the browser and may be stored locally on the device. A download or export occurs only when the user initiates it. Connected hardware is accessed only after permission is given in the browser. GitHub Pages logs visitors’ IP addresses for security purposes; external services are governed by their provider’s privacy policy.",
+  "Lees hoe GitHub Pages technische bezoekgegevens verwerkt.": "Read how GitHub Pages processes technical visitor data.",
+  "Educatief gebruik met naamsvermelding": "Educational use with attribution",
+  "Het oorspronkelijke projectmateriaal van Robbe Wulgaert mag gratis worden gebruikt, gekopieerd en aangepast voor onderwijs, op voorwaarde dat “Robbe Wulgaert – AI in de Klas” duidelijk zichtbaar wordt vermeld, waar redelijkerwijs mogelijk met een link naar het oorspronkelijke project. Commerciële verkoop, betaalde verspreiding, sublicentiëring of herverpakking als commercieel product is niet toegestaan zonder voorafgaande schriftelijke toestemming. Voor ander gebruik buiten onderwijs is ook voorafgaande schriftelijke toestemming nodig. Componenten van derden blijven onder hun eigen licenties vallen.": "Original project material by Robbe Wulgaert may be used, copied and adapted free of charge for education, provided that ‘Robbe Wulgaert – AI in de Klas’ is clearly displayed, where reasonably practical with a link to the original project. Commercial sale, paid distribution, sublicensing or repackaging as a commercial product is not permitted without prior written permission. Other uses outside education also require prior written permission. Third-party components remain subject to their own licences.",
+  "Lees de volledige licentievoorwaarden.": "Read the full licence terms.",
+  "© 2026 Robbe Wulgaert. Educatief gebruik met naamsvermelding; geen commerciële verspreiding.": "© 2026 Robbe Wulgaert. Educational use with attribution; no commercial distribution.",
+  "Spring naar inhoud": "Skip to content",
+  "Spring naar hoofdinhoud": "Skip to main content",
+  "Hoofdnavigatie": "Main navigation",
+  "Paginaonderdelen": "Page sections",
+  "Taalkeuze": "Language selection",
+  "Nederlands kiezen": "Choose Dutch",
+  "Engels kiezen": "Choose English",
+  "Evaluatie": "Evaluation",
+  "Werking": "How it works",
+  "Opdracht": "Assignment",
+  "Beelden": "Images",
+  "Wat leer je?": "What will you learn?",
+  "Onderdelen": "Components",
+  "Familie": "Family",
+  "Voor leerkrachten": "For teachers",
+  "Leerkrachten": "Teachers",
+  "Leerlijn": "Learning path",
+  "Benodigdheden": "Materials",
+  "Privacy": "Privacy",
+  "Opstelling": "Setup",
+  "Gebruik": "Use",
+  "README": "README",
+  "Platform": "Platform",
+  "Pythia": "Pythia",
+  "Start leerplatform": "Start learning platform",
+  "Start platform": "Start platform",
+  "Menu": "Menu",
+  "Bekijk de opdracht": "View the assignment",
+  "Lees README": "Read README",
+  "Leerplatform": "Learning platform",
+  "Onderzoeksplatform": "Research platform",
+  "Oefeningmaker": "Exercise builder",
+  "Open oefeningmaker": "Open exercise builder",
+  "Slimme Vuilnisbak": "Smart Bin",
+  "Geen installatie of leerlingenaccount.": "No installation or student account.",
+  "Lokale bibliotheken voor grafieken en PDF-export.": "Local libraries for charts and PDF export.",
+  "Geschikt voor GitHub Pages.": "Suitable for GitHub Pages.",
+  "robbewulgaert.be": "robbewulgaert.be",
+  "AI in de Klas": "AI in de Klas",
+  "Auteur: Robbe Wulgaert - AI in de Klas - robbewulgaert.be": "Author: Robbe Wulgaert - AI in de Klas - robbewulgaert.be",
+  "Auteur: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert.": "Author: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert.",
+  "Robbe Wulgaert, AI in de Klas, robbewulgaert.be": "Robbe Wulgaert, AI in de Klas, robbewulgaert.be",
+  "Licentie": "License",
+  "Third-party notices": "Third-party notices",
+  "Contact": "Contact",
+  "Project Smart Plants": "Project Smart Plants",
+  "Bouw een slimme plantmeter.": "Build a smart plant meter.",
+  "Meet bodemvochtigheid met een sensor, vergelijk droge en natte potgrond en laat je schakeling reageren wanneer een plant water nodig heeft.": "Measure soil moisture with a sensor, compare dry and wet potting soil and let your circuit react when a plant needs water.",
+  "Bouw, verzamel data en maak jouw eerste verslag": "Build, collect data and make your first report",
+  "Leerlingen voorspellen eerst wat er zal gebeuren. Daarna bouwen ze de opstelling, kalibreren ze hun sensor en verzamelen ze meetwaarden in de browser.": "Students first predict what will happen. Then they build the setup, calibrate their sensor and collect measurements in the browser.",
+  "Voorspel": "Predict",
+  "Leerlingen schrijven op wat ze verwachten bij droge, vochtige en natte bodem.": "Students write down what they expect with dry, moist and wet soil.",
+  "Kalibreer": "Calibrate",
+  "De klas meet zelf wat droog, vochtig en nat betekent voor deze sensor.": "The class measures what dry, moist and wet mean for this sensor.",
+  "Meet": "Measure",
+  "De browser toont live hoe de sensorwaarde verandert tijdens de meting.": "The browser shows live how the sensor value changes during the measurement.",
+  "Ontwerp": "Design",
+  "Kies wanneer de plant water nodig heeft en laat een output reageren.": "Choose when the plant needs water and let an output react.",
+  "Rapporteer": "Report",
+  "Download de meetdata of maak een PDF met grafiek, besluit en reflectie.": "Download the measurement data or create a PDF with graph, conclusion and reflection.",
+  "Vergelijk": "Compare",
+  "De opstelling": "The setup",
+  "Aan de slag met sensoren": "Get started with sensors",
+  "De capacitieve sensor meet hoe de elektrische capaciteit rond de sensor verandert. Meer water in de potgrond verandert die waarde. De Arduino leest de ruwe waarde uit.": "The capacitive sensor measures how the electrical capacitance around it changes. More water in the potting soil changes that value. The Arduino reads the raw value.",
+  "Capacitieve bodemvochtsensor, bijvoorbeeld AZ-Delivery V1.2.": "Capacitive soil-moisture sensor, for example AZ-Delivery V1.2.",
+  "Arduino Uno met USB-datakabel.": "Arduino Uno with USB data cable.",
+  "Schoollaptop met Chrome of Edge.": "School laptop with Chrome or Edge.",
+  "Plant in potgrond en water om te meten.": "Plant in potting soil and water for the measurement.",
+  "In beeld": "In pictures",
+  "Alle informatie in een oogopslag": "All the information at a glance",
+  "De leerlingen werken met echte planten, sensoren en hun microcontroller. De metingen en veranderingen zien ze meteen op het scherm van hun laptop.": "Students work with real plants, sensors and their microcontroller. They immediately see the measurements and changes on their laptop screen.",
+  "Wat oefenen leerlingen?": "What do students practise?",
+  "Meten met sensoren": "Measuring with sensors",
+  "Een sensor geeft een getal. Door droge en natte potgrond te meten, leren leerlingen wat dat getal in hun eigen proef betekent.": "A sensor gives a number. By measuring dry and wet potting soil, students learn what that number means in their own experiment.",
+  "Kalibreren": "Calibrating",
+  "Ze vergelijken droge, licht vochtige en natte bodem voor ze een drempel kiezen.": "They compare dry, lightly moist and wet soil before choosing a threshold.",
+  "IPO-denken": "IPO thinking",
+  "Ze herkennen input, verwerking en output in hun eigen schakeling.": "They recognize input, processing and output in their own circuit.",
+  "Onderzoeken": "Investigating",
+  "Ze vergelijken meetreeksen en schrijven een besluit met hun eigen data.": "They compare measurement series and write a conclusion with their own data.",
+  "Snel inzetbaar in de klas.": "Ready to use in class.",
+  "De opdracht is gemaakt voor leerlingen van ongeveer 13-14 jaar oud. Start met de demomodus, sluit daarna de hardware aan en laat leerlingen afsluiten met een CSV-bestand of PDF-rapport.": "The assignment is made for students around 13-14 years old. Start with demo mode, then connect the hardware and let students finish with a CSV file or PDF report.",
+  "Geschikt voor korte onderzoeksmomenten binnen Informaticawetenschappen of STEM.": "Suitable for short research moments in Computer Science or STEM.",
+  "Bruikbaar met Arduino, micro:bit-code of alleen demomodus.": "Usable with Arduino, micro:bit code or demo mode only.",
+  "PDF-export bundelt hypothese, kalibratie, meetreeksen, grafiek, besluit en reflectie.": "PDF export bundles hypothesis, calibration, measurement series, graph, conclusion and reflection.",
+  "Geen backend nodig: de map kan als statische site op GitHub Pages.": "No backend needed: the folder can run as a static site on GitHub Pages.",
+  "Open het onderzoeksplatform.": "Open the research platform.",
+  "Start de demomodus, sluit Arduino aan of laat leerlingen hun meetreeksen vergelijken en rapporteren.": "Start demo mode, connect Arduino or let students compare and report their measurement series."
+};
+  const META = {
+  "title": "Project Smart Plants",
+  "description": "Project Smart Plants is a lightweight browser environment for soil-moisture research with Arduino, WebSerial, live charts and PDF export."
+};
+  const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "INPUT", "SELECT", "OPTION"]);
+  const TEXT_NODES = [];
+  const ATTR_NODES = [];
+  let originalTitle = document.title;
+  let originalDescription = null;
+  const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+  function preserveOuterWhitespace(original, translated) {
+    const start = original.match(/^\s*/)?.[0] || "";
+    const end = original.match(/\s*$/)?.[0] || "";
+    return start + translated + end;
+  }
+  function collectTextNodes() {
+    if (TEXT_NODES.length) return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || SKIP_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        return normalize(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      TEXT_NODES.push({ node, original: node.nodeValue, key: normalize(node.nodeValue) });
+    }
+  }
+  function collectAttributes() {
+    if (ATTR_NODES.length) return;
+    document.querySelectorAll("[aria-label], [alt], [title], [placeholder]").forEach((element) => {
+      ["aria-label", "alt", "title", "placeholder"].forEach((attr) => {
+        if (element.hasAttribute(attr)) {
+          const original = element.getAttribute(attr);
+          ATTR_NODES.push({ element, attr, original, key: normalize(original) });
+        }
+      });
+    });
+  }
+  function setLanguage(language) {
+    const useEnglish = language === "en";
+    collectTextNodes();
+    collectAttributes();
+    TEXT_NODES.forEach((entry) => {
+      const translated = TRANSLATIONS[entry.key];
+      entry.node.nodeValue = useEnglish && translated ? preserveOuterWhitespace(entry.original, translated) : entry.original;
+    });
+    ATTR_NODES.forEach((entry) => {
+      const translated = TRANSLATIONS[entry.key];
+      entry.element.setAttribute(entry.attr, useEnglish && translated ? translated : entry.original);
+    });
+    document.documentElement.lang = useEnglish ? "en" : "nl-BE";
+    document.title = useEnglish && META.title ? META.title : originalTitle;
+    const description = document.querySelector('meta[name="description"]');
+    if (description) {
+      if (originalDescription === null) originalDescription = description.getAttribute("content") || "";
+      description.setAttribute("content", useEnglish && META.description ? META.description : originalDescription);
+    }
+    document.querySelectorAll("[data-language-choice]").forEach((button) => {
+      const isActive = button.dataset.languageChoice === (useEnglish ? "en" : "nl");
+      button.classList.toggle("is-active", isActive);
+      if (isActive) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
+    });
+    try { localStorage.setItem(LANGUAGE_KEY, useEnglish ? "en" : "nl"); } catch (error) {}
+    document.dispatchEvent(new CustomEvent("smartplants:languagechange"));
+  }
+  function initLanguageToggle() {
+    try { localStorage.setItem(LANGUAGE_KEY, "en"); } catch (error) {}
+    document.dispatchEvent(new CustomEvent("landing:language-ready"));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initLanguageToggle);
+  else initLanguageToggle();
+})();
+</script>
+</body>
+</html>
